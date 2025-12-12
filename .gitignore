@@ -1,0 +1,6 @@
+frontend-old/
+
+**/node_modules/
+
+**/.env
+**/.env.*
