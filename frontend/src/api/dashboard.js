@@ -1,8 +1,6 @@
-// frontend/src/api/dashboard.js
-import RequireAuth from '../auth/RequireAuth';
-import { apiRequest } from './client';
+import { api } from "./client";
 
-// GET /api/dashboard
-export function getDashboard(token) {
-  return apiRequest('api/dashboard', { method: 'GET' }, token);
+export async function getDashboard() {
+  const res = await api.get("/dashboard");
+  return res.data;
 }

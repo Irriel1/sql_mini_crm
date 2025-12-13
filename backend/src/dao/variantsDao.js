@@ -101,6 +101,15 @@ async function updateVariant(id, data) {
 
   return rows[0] || null;
 }
+async function countMovementsForVariant(variantId) {
+  const [rows] = await pool.query(
+    `SELECT COUNT(*) AS cnt
+     FROM inventory_movements
+     WHERE variant_id = ?`,
+    [variantId]
+  );
+  return rows[0]?.cnt ?? 0;
+}
 
 async function deleteVariant(id) {
   const [result] = await pool.query(
@@ -116,5 +125,6 @@ module.exports = {
   getVariantById,
   createVariant,
   updateVariant,
+  countMovementsForVariant,
   deleteVariant,
 };

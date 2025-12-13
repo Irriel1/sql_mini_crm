@@ -1,52 +1,67 @@
-import { useEffect, useState } from 'react';
-import { useAuth } from '../auth/AuthContext';
-import { getDashboard } from '../api/dashboard';
-import { Navigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useAuth } from "../auth/AuthContext";
+import { getDashboard } from "../api/dashboard";
+import { Navigate } from "react-router-dom";
 
 export default function DashboardPage() {
-  const { token, isLoading: authLoading } = useAuth();
+  const { token, isLoading: authLoading, isAuthenticated } = useAuth();
 
   const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // <-- začni jako false
-  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    // pokud se ještě ověřuje auth (verifyToken), tak dashboard neřeš
+    // počkej až doběhne verifyToken v AuthContext
     if (authLoading) return;
 
-    // pokud po ověření *nemáš* token, tak nenačítej dashboard
-    if (!token) {
+    // když není přihlášený, dashboard nenačítej
+    if (!isAuthenticated || !token) {
       setData(null);
-      setErrorMessage('You are not logged in.');
+      setErrorMessage("");
       setIsLoading(false);
       return;
     }
 
+    let cancelled = false;
+
     async function loadDashboard() {
       setIsLoading(true);
-      setErrorMessage('');
+      setErrorMessage("");
+
       try {
-        const res = await getDashboard(token);
-        setData(res);
+        // axios client už posílá Authorization header automaticky
+        const res = await getDashboard();
+        if (!cancelled) setData(res);
       } catch (error) {
+        if (cancelled) return;
         console.error(error);
         setErrorMessage(
-          error instanceof Error ? error.message : 'Failed to load dashboard'
+          error instanceof Error ? error.message : "Failed to load dashboard"
         );
+        setData(null);
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     }
 
     loadDashboard();
-  }, [token, authLoading]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authLoading, isAuthenticated, token]);
+
+  // ✅ pokud už ověření skončilo a nejsi přihlášený, přesměruj na login
+  if (!authLoading && !isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
   if (authLoading || isLoading) {
     return <p>Loading dashboard…</p>;
   }
 
   if (errorMessage && !data) {
-    return <p style={{ color: 'red' }}>Error: {errorMessage}</p>;
+    return <p style={{ color: "red" }}>Error: {errorMessage}</p>;
   }
 
   if (!data) {
@@ -86,23 +101,20 @@ export default function DashboardPage() {
           <p className="dashboard-card-label">Total stock</p>
           <p className="dashboard-card-value">{stock_total ?? 0}</p>
         </div>
+
         <div className="dashboard-card">
           <p className="dashboard-card-label">Low stock variants</p>
-          <p className="dashboard-card-value">
-            {low_stock_variants.length}
-          </p>
+          <p className="dashboard-card-value">{low_stock_variants.length}</p>
         </div>
+
         <div className="dashboard-card">
-            <p className="dashboard-card-label">recent_items</p>
-            <p className="dashboard-card-value">
-                {recent_items.length}
-                </p>
-            </div>
+          <p className="dashboard-card-label">Recent items</p>
+          <p className="dashboard-card-value">{recent_items.length}</p>
+        </div>
+
         <div className="dashboard-card">
-            <p className="dashboard-card-label">recent_movements</p>
-            <p className="dashboard-card-value">
-            {recent_movements.length}
-            </p>
+          <p className="dashboard-card-label">Recent movements</p>
+          <p className="dashboard-card-value">{recent_movements.length}</p>
         </div>
       </div>
 
@@ -118,14 +130,12 @@ export default function DashboardPage() {
             <ul className="dashboard-list">
               {recent_items.map((item) => (
                 <li key={item.id} className="dashboard-list-item">
-                  <span className="dashboard-list-main">
-                    {item.name}
-                  </span>
+                  <span className="dashboard-list-main">{item.name}</span>
                   <span className="dashboard-list-meta">
-                    {item.category}{' '}
+                    {item.category}{" "}
                     {item.created_at
-                      ? '· ' + new Date(item.created_at).toLocaleDateString()
-                      : ''}
+                      ? "· " + new Date(item.created_at).toLocaleDateString()
+                      : ""}
                   </span>
                 </li>
               ))}
@@ -136,16 +146,14 @@ export default function DashboardPage() {
         {/* Low stock variants */}
         <section className="dashboard-section">
           <h2 className="dashboard-section-title">
-            Low stock variants{' '}
-            <span style={{ fontSize: 13, color: '#6b7280' }}>
+            Low stock variants{" "}
+            <span style={{ fontSize: 13, color: "#6b7280" }}>
               (threshold: {low_stock_threshold})
             </span>
           </h2>
 
           {low_stock_variants.length === 0 ? (
-            <p className="dashboard-empty">
-              No variants below threshold 🎉
-            </p>
+            <p className="dashboard-empty">No variants below threshold 🎉</p>
           ) : (
             <ul className="dashboard-list">
               {low_stock_variants.map((variant) => (
@@ -162,9 +170,6 @@ export default function DashboardPage() {
           )}
         </section>
       </div>
-
-      {/* Pokud chceš, můžeš později přidat třetí sekci pro recent_movements */}
-      {/* recent_movements.length teď bude 0, ale data už na to máme připravená */}
     </div>
   );
 }

@@ -35,6 +35,17 @@ async function getItems({ search, limit, offset, sort, dir }) {
   return rows;
 }
 
+async function getVariantsByItemId(itemId) {
+  const [rows] = await pool.query(
+    `SELECT id, item_id, sku, variant_name, price, stock_count, created_at
+     FROM item_variants
+     WHERE item_id = ?
+     ORDER BY created_at DESC`,
+    [itemId]
+  );
+  return rows;
+}
+
 async function updateItem(id, data) {
   const { name, category, description } = data || {};
 
@@ -105,4 +116,5 @@ module.exports = {
   createItem,
   updateItem,
   softDeleteItem,
+  getVariantsByItemId
 };

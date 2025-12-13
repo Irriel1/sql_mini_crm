@@ -73,19 +73,35 @@ async function listItems(req, res, next) { // seznam položek
   }
 }
 
-async function getItem(req, res, next) { // získat položku podle id
+async function getItem(req, res, next) {
   try {
-    const id = parseInt(req.params.id, 10);
-    if (Number.isNaN(id)) {
-      return res.status(400).json({ error: 'Invalid id' });
+    const id = Number(req.params.id);
+
+    // přísnější validace než parseInt (nepropustí "12abc")
+    if (!Number.isInteger(id) || id <= 0) {
+      return res.status(400).json({ error: "Invalid id" });
     }
 
     const item = await itemsDao.getItemById(id);
     if (!item) {
-      return res.status(404).json({ error: 'Not found' });
+      return res.status(404).json({ error: "Not found" });
     }
 
-    res.json({ item });
+    // načtení variants pro item
+    const variants = await itemsDao.getVariantsByItemId(id);
+
+    // agregace pro UI (statistiky)
+    const stock_total = variants.reduce(
+      (sum, v) => sum + Number(v.stock_count ?? 0),
+      0
+    );
+
+    return res.json({
+      ...item,                 // rozbalí item fields (id,name,category,...)
+      variants,                // pole variant
+      variants_count: variants.length,
+      stock_total,
+    });
   } catch (err) {
     next(err);
   }

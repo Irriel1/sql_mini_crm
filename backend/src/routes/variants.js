@@ -4,13 +4,10 @@ const variantsController = require('../controllers/variantsController');
 
 const router = express.Router();
 
-// GET /api/variants/:id
 router.get('/:id', authMiddleware, variantsController.getVariant);
 
-// PUT /api/variants/:id
 router.put('/:id', authMiddleware, variantsController.updateVariant);
 
-// DELETE /api/variants/:id
-router.delete('/:id', authMiddleware, variantsController.deleteVariant);
+router.delete('/:id', authMiddleware, variantsController.deleteVariant); // edge-case safe
 
 module.exports = router;

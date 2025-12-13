@@ -14,7 +14,7 @@ export default function Topbar({ onToggleSidebar }) {
         <button className="hamburger" onClick={onToggleSidebar}>
           ☰
         </button>
-        <span style={{ fontWeight: 600 }}>Dashboard</span>
+        <span style={{ fontWeight: 600 }}>My CRM</span>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>

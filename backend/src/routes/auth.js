@@ -7,7 +7,7 @@ const router = express.Router();
 const { authMiddleware } = require('../middleware/auth');
 
 // DB instance
-const { pool } = require('../db');   // << BRILLIANT FIX
+const { pool } = require('../db');
 
 // ===============================
 //   GET /api/auth/me

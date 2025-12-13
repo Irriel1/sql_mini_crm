@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import Sidebar from './Sidebar';
-import Topbar from './Topbar';
+import { useState } from "react";
+import { Outlet } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import Topbar from "./Topbar";
 
-export default function Layout({ children }) {
+export default function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   function handleToggleSidebar() {
@@ -17,10 +18,11 @@ export default function Layout({ children }) {
     <div className="layout">
       <Sidebar isMobileOpen={isSidebarOpen} onClose={handleCloseSidebar} />
 
-      <div style={{ flex: 1 }}>
+      <div className="layout-right">
         <Topbar onToggleSidebar={handleToggleSidebar} />
-
-        <main className="main-content">{children}</main>
+        <main className="main-content">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

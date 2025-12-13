@@ -23,12 +23,12 @@ CREATE TABLE items (
 CREATE TABLE item_variants (
   id INT AUTO_INCREMENT PRIMARY KEY,
   item_id INT NOT NULL,
-  sku VARCHAR(100) UNIQUE,
-  variant_name VARCHAR(255),
-  attributes JSON NULL,
-  price DECIMAL(12,2) DEFAULT 0,
-  stock_count INT DEFAULT 0,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  sku VARCHAR(100) NOT NULL UNIQUE,
+  variant_name VARCHAR(255) NOT NULL,
+  price DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  stock_count INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT uq_item_variant_sku UNIQUE (item_id, sku),
   FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
 );
 
@@ -62,3 +62,35 @@ CREATE TABLE settings (
 
 INSERT INTO settings (id, warehouse_name) VALUES (1, 'Default Warehouse') 
   ON DUPLICATE KEY UPDATE warehouse_name=VALUES(warehouse_name);
+
+CREATE OR REPLACE VIEW v_items_with_stock AS
+SELECT
+  i.id,
+  i.name,
+  i.category,
+  i.description,
+  i.created_at,
+  COALESCE(SUM(v.stock_count), 0) AS stock_total,
+  COUNT(v.id) AS variants_count
+FROM items i
+LEFT JOIN item_variants v ON v.item_id = i.id
+GROUP BY i.id, i.name, i.category, i.description, i.created_at;
+
+-- ITEMS: list / search / category filter / sort
+CREATE INDEX idx_items_name ON items (name);
+CREATE INDEX idx_items_category ON items (category);
+CREATE INDEX idx_items_category_name ON items (category, name);
+
+-- VARIANTS: list per item + stock range
+CREATE INDEX idx_variants_item_id ON item_variants (item_id);
+CREATE INDEX idx_variants_item_stock ON item_variants (item_id, stock_count);
+
+-- MOVEMENTS: filtr variant/type/user + date range
+CREATE INDEX idx_movements_variant_created ON inventory_movements (variant_id, created_at);
+CREATE INDEX idx_movements_user_created ON inventory_movements (user_id, created_at);
+CREATE INDEX idx_movements_type_created ON inventory_movements (type, created_at);
+
+-- LOGS: audit filtry user/action + date range
+CREATE INDEX idx_logs_user_created ON logs (user_id, created_at);
+CREATE INDEX idx_logs_action_created ON logs (action, created_at);
+

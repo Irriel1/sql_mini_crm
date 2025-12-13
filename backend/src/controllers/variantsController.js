@@ -8,9 +8,8 @@ const listByItemSchema = Joi.object({
 });
 
 const variantBodySchema = Joi.object({
-  variant_name: Joi.string().min(1).required(),
   sku: Joi.string().max(100).allow('', null).optional(),
-  attributes: Joi.object().unknown(true).optional(),
+  variant_name: Joi.string().max(255).trim().required(),
   price: Joi.number().precision(2).min(0).optional(),
   stock_count: Joi.number().integer().min(0).optional(),
 });
@@ -74,7 +73,6 @@ async function createVariantForItem(req, res, next) {
     const variant = await variantsDao.createVariant(itemId, {
       sku: value.sku,
       variant_name: value.variant_name,
-      attributes: value.attributes,
       price: value.price,
       stock_count: value.stock_count,
     });
@@ -129,7 +127,6 @@ async function updateVariant(req, res, next) {
     const updated = await variantsDao.updateVariant(id, {
       sku: value.sku,
       variant_name: value.variant_name,
-      attributes: value.attributes,
       price: value.price,
       stock_count: value.stock_count,
     });
@@ -148,16 +145,26 @@ async function updateVariant(req, res, next) {
 async function deleteVariant(req, res, next) {
   try {
     const id = parseInt(req.params.id, 10);
-    if (Number.isNaN(id)) {
-      return res.status(400).json({ error: 'Invalid id' });
+    if (Number.isNaN(id)) return res.status(400).json({ error: 'Invalid id' });
+
+    // 1) pokud varianta neexistuje
+    const exists = await variantsDao.getVariantById(id);
+    if (!exists) return res.status(404).json({ error: 'Not found' });
+
+    // 2) EDGE-CASE FIX: blokuj delete, pokud existují pohyby
+    const movementsCount = await variantsDao.countMovementsForVariant(id);
+    if (movementsCount > 0) {
+      return res.status(409).json({
+        error: 'Cannot delete variant with inventory history',
+        movements: movementsCount,
+      });
     }
 
+    // 3) smaž
     const deleted = await variantsDao.deleteVariant(id);
-    if (!deleted) {
-      return res.status(404).json({ error: 'Not found' });
-    }
+    if (!deleted) return res.status(404).json({ error: 'Not found' });
 
-    res.status(204).end();
+    return res.status(204).end();
   } catch (err) {
     next(err);
   }

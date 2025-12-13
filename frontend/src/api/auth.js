@@ -1,19 +1,25 @@
-import { apiRequest } from './client';
+import { api } from "./client";
 
-export function loginUser(email, password) {
-  return apiRequest('/auth/login', {
-    method: 'POST',
-    body: JSON.stringify({ email, password }),
-  });
+// POST /api/auth/login
+export async function loginUser(email, password) {
+  const res = await api.post("/auth/login", { email, password });
+  return res.data;
 }
 
-export function registerUser(email, password, name = '') {
-  return apiRequest('/auth/register', {
-    method: 'POST',
-    body: JSON.stringify({ name, email, password }),
-  });
+// GET /api/auth/me
+export async function getCurrentUser() {
+  const res = await api.get("/auth/me");
+  return res.data;
 }
 
-export function getCurrentUser(token) {
-  return apiRequest('/auth/me', { method: 'GET' }, token);
+// POST /api/auth/register
+export async function registerUser(data) {
+  const res = await api.post("/auth/register", data);
+  return res.data;
+}
+
+// (volitelné) logout – jen pokud existuje na backendu
+export async function logoutUser() {
+  const res = await api.post("/auth/logout");
+  return res.data;
 }
