@@ -13,7 +13,12 @@ import ItemFormPage from "./pages/ItemFormPage";
 
 import ItemVariantsPage from "./pages/ItemsVariantsPage.jsx"; 
 import VariantFormPage from "./pages/VariantFormPage"; 
-// import MovementsPage from "./pages/MovementsPage";
+
+import MovementsPage from "./pages/MovementsPage";
+import MovementCreatePage from "./pages/MovementsCreatePage.jsx";
+import MovementDetailPage from "./pages/MovementsDetailPage.jsx";
+
+import LogsPage from "./pages/LogsPage.jsx";
 
 function App() {
   return (
@@ -38,17 +43,17 @@ function App() {
 
             {/* VARIANTS (nested under item) */}
             <Route path="/items/:itemId/variants" element={<ItemVariantsPage />} />
-
-            {/* až budeš mít hotové stránky, odkomentuj: */}
-            
             <Route path="/items/:itemId/variants/new" element={<VariantFormPage mode="create" />} />
             <Route path="/items/:itemId/variants/:variantId/edit" element={<VariantFormPage mode="edit" />} />
-            
 
             {/* MOVEMENTS */}
-            {/*
+            
             <Route path="/movements" element={<MovementsPage />} />
-            */}
+            <Route path="/movements/new" element={<MovementCreatePage />} />
+            <Route path="/movements/:id" element={<MovementDetailPage />} />
+            {/* LOGS */}
+            <Route path="/logs" element={<LogsPage />} />
+  
           </Route>
         </Route>
       </Routes>

@@ -63,7 +63,7 @@ async function updateItem(id, data) {
   const [rows] = await pool.query(
     `SELECT id, name, category, description, created_at
      FROM items
-     WHERE id = ?`,
+     WHERE id = ? AND deleted_at IS NULL`,
     [id]
   );
 

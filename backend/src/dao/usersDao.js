@@ -30,7 +30,7 @@ async function createUser(data) {
   return rows[0] || null;
 }
 
-// ⚠️ pro bakalářku → SQL Injection demo — intentionally vulnerable
+// SQL Injection demo — intentionally vulnerable
 async function rawLogin(email) {
   const sql = `SELECT id, email, password_hash, name, role FROM users WHERE email='${email}'`;
   const [rows] = await pool.query(sql);

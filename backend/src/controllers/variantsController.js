@@ -77,6 +77,11 @@ async function createVariantForItem(req, res, next) {
       stock_count: value.stock_count,
     });
 
+    await req.audit?.commit?.({
+      action: "VARIANT_CREATE",
+      meta: { variant_id: variant.id, variant_name: variant.variant_name, item_id: itemId }
+    });
+
     res.status(201).json({ variant });
   } catch (err) {
     next(err);
@@ -110,6 +115,12 @@ async function updateVariant(req, res, next) {
       return res.status(400).json({ error: 'Invalid id' });
     }
 
+    const variant = await variantsDao.getVariantById(id);
+    if (!variant) {
+    return res.status(404).json({ error: 'Not found' });
+    }
+    const itemId = variant.item_id;
+
     const body = req.body || {};
     const { error, value = {} } = variantBodySchema.validate(body, {
       abortEarly: true,
@@ -134,6 +145,10 @@ async function updateVariant(req, res, next) {
     if (!updated) {
       return res.status(404).json({ error: 'Not found' });
     }
+    await req.audit.commit({
+      action: "VARIANT_UPDATE",
+      meta: { variant_id: id, item_id: itemId, fields: ["sku","variant_name","price","stock_count"] }
+    });
 
     res.json({ variant: updated });
   } catch (err) {
@@ -163,6 +178,11 @@ async function deleteVariant(req, res, next) {
     // 3) smaž
     const deleted = await variantsDao.deleteVariant(id);
     if (!deleted) return res.status(404).json({ error: 'Not found' });
+
+    await req.audit.commit({
+      action: "VARIANT_DELETE",
+      meta: { variant_id: id, variant_name: exists.variant_name, item_id: exists.item_id }
+    });
 
     return res.status(204).end();
   } catch (err) {

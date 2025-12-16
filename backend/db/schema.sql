@@ -42,6 +42,10 @@ CREATE TABLE inventory_movements (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (variant_id) REFERENCES item_variants(id),
   FOREIGN KEY (user_id) REFERENCES users(id)
+
+  INDEX (user_id)
+  INDEX (variant_id)
+  INDEX (created_at)
 );
 
 CREATE TABLE logs (

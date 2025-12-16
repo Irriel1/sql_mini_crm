@@ -4,10 +4,7 @@ export default function Sidebar({ isMobileOpen, onClose }) {
   const navItems = [
     { to: "/", label: "Dashboard", end: true },
     { to: "/items", label: "Items" },
-
-    // NEW
     { to: "/movements", label: "Movements" },
-
     { to: "/logs", label: "Logs" },
     { to: "/sqli-demo", label: "SQL Injection Demo" },
   ];

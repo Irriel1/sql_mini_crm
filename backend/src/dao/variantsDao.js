@@ -3,7 +3,7 @@ const { pool } = require('../db');
 
 async function getVariantsByItemId(itemId, { limit, offset }) {
   const [rows] = await pool.query(
-    `SELECT id, item_id, sku, variant_name, attributes, price, stock_count, created_at
+    `SELECT id, item_id, sku, variant_name, price, stock_count, created_at
      FROM item_variants
      WHERE item_id = ?
      ORDER BY id ASC
@@ -15,7 +15,7 @@ async function getVariantsByItemId(itemId, { limit, offset }) {
 
 async function getVariantById(id) {
   const [rows] = await pool.query(
-    `SELECT id, item_id, sku, variant_name, attributes, price, stock_count, created_at
+    `SELECT id, item_id, sku, variant_name, price, stock_count, created_at
      FROM item_variants
      WHERE id = ?`,
     [id]
@@ -38,8 +38,8 @@ async function createVariant(itemId, data) {
       : attributes || null;
 
   const [result] = await pool.query(
-    `INSERT INTO item_variants (item_id, sku, variant_name, attributes, price, stock_count)
-     VALUES (?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO item_variants (item_id, sku, variant_name, price, stock_count)
+     VALUES (?, ?, ?, ?, ?)`,
     [
       itemId,
       sku || null,
@@ -51,7 +51,7 @@ async function createVariant(itemId, data) {
   );
 
   const [rows] = await pool.query(
-    `SELECT id, item_id, sku, variant_name, attributes, price, stock_count, created_at
+    `SELECT id, item_id, sku, variant_name, price, stock_count, created_at
      FROM item_variants
      WHERE id = ?`,
     [result.insertId]
@@ -76,7 +76,7 @@ async function updateVariant(id, data) {
 
   const [result] = await pool.query(
     `UPDATE item_variants
-     SET sku = ?, variant_name = ?, attributes = ?, price = ?, stock_count = ?
+     SET sku = ?, variant_name = ?, price = ?, stock_count = ?
      WHERE id = ?`,
     [
       sku || null,
@@ -93,7 +93,7 @@ async function updateVariant(id, data) {
   }
 
   const [rows] = await pool.query(
-    `SELECT id, item_id, sku, variant_name, attributes, price, stock_count, created_at
+    `SELECT id, item_id, sku, variant_name, price, stock_count, created_at
      FROM item_variants
      WHERE id = ?`,
     [id]

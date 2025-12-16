@@ -45,6 +45,10 @@ const itemBodySchema = Joi.object({
         // kdyby z nějakého důvodu INSERT proběhl divně
         return res.status(500).json({ error: 'Failed to create item' });
       }
+      await req.audit.commit({
+        action: "ITEM_CREATE",
+        meta: { item_id: item.id, name: item.name }
+      });
   
       res.status(201).json({ item });
     } catch (err) {
@@ -130,6 +134,11 @@ async function updateItem(req, res, next) { // aktualizovat existující položk
       return res.status(404).json({ error: 'Not found' });
     }
 
+    await req.audit.commit({
+      action: "ITEM_UPDATE",
+      meta: { item_id: item.id, fields: ["name", "category", "description"] }
+    });
+
     res.json({ item });
   } catch (err) {
     next(err);
@@ -143,12 +152,18 @@ async function deleteItem(req, res, next) { // smazat položku (soft delete)
       return res.status(400).json({ error: 'Invalid id' });
     }
 
+    const item = await itemsDao.getItemById(id);
+    if (!item) return res.status(404).json({ error: 'Not found' });
+
     const deleted = await itemsDao.softDeleteItem(id);
     if (!deleted) {
       return res.status(404).json({ error: 'Not found' });
     }
-
-    res.status(204).end();
+    await req.audit.commit({
+      action: "ITEM_DELETE",
+      meta: { item_id: id, name: item.name }
+    });
+    return res.status(204).end();
   } catch (err) {
     next(err);
   }

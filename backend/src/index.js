@@ -14,10 +14,10 @@ const logsRoutes = require('./routes/logs');
 const adminRoutes = require('./routes/admin');
 const systemRoutes = require('./routes/system');
 const movementsRoutes = require('./routes/movements');
-
-
+const demoMovementsRoutes = require('./routes/demoMovements');
 
 const errorHandler = require('./middleware/errorHandler');
+const auditMiddleware = require("./services/audit");
 
 const app = express();
 
@@ -26,6 +26,7 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use(auditMiddleware); // attach req.audit
 
 // health
 app.get('/health', (req, res) => res.json({ ok: true, ts: Date.now() }));
@@ -41,13 +42,16 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/system', systemRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/items', itemsRoutes);
-app.use('/api/inventory-movements', movementsRoutes);
-app.use('/api/logs', logsRoutes);
+app.use('/api/inventory-movements', movementsRoutes); // SAFE
+app.use('/api/demo', demoMovementsRoutes); // VULN
+
+
+
 
 // demo vulnerable route
 if (DEMO_VULN) {
-  const demoRoutes = require('./routes/demo');
-  app.use('/api/demo', demoRoutes);
+  const demoMovementsRoutes = require('./routes/demoMovements');
+  app.use('/api/demo', demoMovementsRoutes);
 }
 
 // error handling;

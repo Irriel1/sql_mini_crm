@@ -28,16 +28,40 @@ async function login(req, res, next) {
     if (error) return res.status(400).json({ error: error.details[0].message });
 
     const user = await usersDao.getUserByEmail(value.email);
-    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+
+    if (!user) {
+      await req.audit.commit({
+        action: 'LOGIN_FAIL',
+        meta: { email: value.email, reason: 'USER_NOT_FOUND' },
+      });
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
     const ok = await bcrypt.compare(value.password, user.password_hash);
-    if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
+    if (!ok) {
+      // nastavíme req.user kvůli logs.user_id (jinak by bylo NULL)
+      req.user = { id: user.id, role: user.role };
+
+      await req.audit.commit({
+        action: 'LOGIN_FAIL',
+        meta: { email: value.email, reason: 'BAD_PASSWORD' },
+      });
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
     const token = jwt.sign(
       { sub: user.id, role: user.role },
       JWT_SECRET,
       { expiresIn: '4h' }
     );
+
+    // nastavíme req.user kvůli logs.user_id
+    req.user = { id: user.id, role: user.role };
+
+    await req.audit.commit({
+      action: 'LOGIN_SUCCESS',
+      meta: { email: user.email, role: user.role },
+    });
 
     return res.json({
       token,
@@ -60,7 +84,13 @@ async function register(req, res, next) {
     if (error) return res.status(400).json({ error: error.details[0].message });
 
     const existing = await usersDao.getUserByEmail(value.email);
-    if (existing) return res.status(400).json({ error: 'Email already in use' });
+    if (existing) {
+      await req.audit.commit({
+        action: 'REGISTER_FAIL',
+        meta: { email: value.email, reason: 'EMAIL_IN_USE' },
+      });
+      return res.status(400).json({ error: 'Email already in use' });
+    }
 
     const hash = await bcrypt.hash(value.password, 10);
 
@@ -69,6 +99,23 @@ async function register(req, res, next) {
       password_hash: hash,
       name: value.name,
       role: value.role,
+    });
+
+    if (!newUser) {
+      await req.audit.commit({
+        action: 'REGISTER_FAIL',
+        meta: { email: value.email, reason: 'CREATE_FAILED' },
+      });
+      return res.status(500).json({ error: 'Failed to create user' });
+    }
+
+    // tady typicky req.user ještě není (registrace je veřejná)
+    // ale můžeme si ho nastavit, aby logs.user_id mělo hodnotu
+    req.user = { id: newUser.id, role: newUser.role };
+
+    await req.audit.commit({
+      action: 'REGISTER_SUCCESS',
+      meta: { email: newUser.email, role: newUser.role },
     });
 
     return res.status(201).json({ user: newUser });
@@ -89,15 +136,39 @@ async function demoRawLogin(req, res, next) {
 
     // intentional SQL injection vulnerability
     const user = await usersDao.rawLogin(email);
-    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+    if (!user) {
+      await req.audit.commit({
+        action: 'DEMO_RAW_LOGIN_FAIL',
+        meta: { email: email ?? null, reason: 'USER_NOT_FOUND_OR_QUERY_FAILED' },
+      });
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
     // naive compare (for demo only)
-    if (password !== user.password_hash)
+    if (password !== user.password_hash) {
+      req.user = { id: user.id, role: user.role };
+
+      await req.audit.commit({
+        action: 'DEMO_RAW_LOGIN_FAIL',
+        meta: { email: user.email, reason: 'BAD_PASSWORD_NAIVE' },
+      });
       return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
-    const token = jwt.sign({ sub: user.id, role: user.role }, JWT_SECRET, { expiresIn: '4h' });
+    const token = jwt.sign(
+      { sub: user.id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '4h' }
+    );
 
-    res.json({
+    req.user = { id: user.id, role: user.role };
+
+    await req.audit.commit({
+      action: 'DEMO_RAW_LOGIN_SUCCESS',
+      meta: { email: user.email, role: user.role },
+    });
+
+    return res.json({
       token,
       user: { id: user.id, email: user.email, name: user.name, role: user.role },
     });
