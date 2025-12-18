@@ -26,7 +26,7 @@ const itemBodySchema = Joi.object({
       });
   
       if (error) {
-        // sem by ses dostal, kdyby "name" chybělo / bylo prázdné
+        // kdyby "name" chybělo / bylo prázdné
         return res.status(400).json({ error: error.details[0].message });
       }
   

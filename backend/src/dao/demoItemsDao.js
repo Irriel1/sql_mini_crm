@@ -1,4 +1,3 @@
-// src/dao/demoItemsDao.js
 const { pool } = require('../db');
 
 /**

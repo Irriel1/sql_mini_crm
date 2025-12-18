@@ -1,4 +1,3 @@
-// src/dao/logsDao.js
 const { pool } = require('../db');
 
 // list podle filtrů

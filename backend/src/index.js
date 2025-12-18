@@ -16,6 +16,7 @@ const systemRoutes = require('./routes/system');
 const movementsRoutes = require('./routes/movements');
 const demoMovementsRoutes = require('./routes/demoMovements');
 
+const sqliLabRouter = require('./modules/sqliLab/sqliLab.router');
 const errorHandler = require('./middleware/errorHandler');
 const auditMiddleware = require("./services/audit");
 
@@ -32,6 +33,7 @@ app.use(auditMiddleware); // attach req.audit
 app.get('/health', (req, res) => res.json({ ok: true, ts: Date.now() }));
 
 // routes
+app.use('/api/sqli-demo', sqliLabRouter)
 
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/settings', settingsRoutes);

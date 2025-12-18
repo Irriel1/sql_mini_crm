@@ -1,7 +1,5 @@
-// src/routes/items.js
 const express = require('express');
-const { authMiddleware } = require('../middleware/auth.js');
-const { requireRole } = require('../middleware/requireRole.js');
+const { authMiddleware, requireRole } = require('../middleware/auth.js');
 const itemsController = require('../controllers/itemsController');
 const variantsController = require('../controllers/variantsController');
 

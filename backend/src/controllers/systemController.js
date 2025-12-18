@@ -4,8 +4,6 @@ const systemDao = require('../dao/systemDao');
 // pokusíme se načíst verzi z package.json
 let appVersion = '0.0.1';
 try {
-  // podle struktury projektu můžeš upravit cestu
-  // pokud máš backend/package.json, možná bude potřeba "../package.json" nebo "../../package.json"
   const pkg = require('../../package.json');
   appVersion = pkg.version || appVersion;
 } catch (e) {

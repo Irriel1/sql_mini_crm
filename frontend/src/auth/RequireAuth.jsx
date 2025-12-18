@@ -10,10 +10,10 @@ export default function RequireAuth() {
   }
 
   if (!token) {
-    // už víme, že authLoading skončil a token není → kopni ho na /login
+    // už víme, že authLoading skončil a token není - kopnem ho na /login
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  // uživatel je přihlášený → pusť ho dál
+  // uživatel je přihlášený - pustíme ho dál
   return <Outlet />;
 }

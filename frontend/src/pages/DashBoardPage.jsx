@@ -14,7 +14,7 @@ export default function DashboardPage() {
     // počkej až doběhne verifyToken v AuthContext
     if (authLoading) return;
 
-    // když není přihlášený, dashboard nenačítej
+    // když není přihlášený, dashboard nenačítejme
     if (!isAuthenticated || !token) {
       setData(null);
       setErrorMessage("");
@@ -51,7 +51,7 @@ export default function DashboardPage() {
     };
   }, [authLoading, isAuthenticated, token]);
 
-  // ✅ pokud už ověření skončilo a nejsi přihlášený, přesměruj na login
+  // pokud už ověření skončilo a nejsi přihlášený, přesměrování na login
   if (!authLoading && !isAuthenticated) {
     return <Navigate to="/login" replace />;
   }

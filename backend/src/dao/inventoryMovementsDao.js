@@ -1,4 +1,3 @@
-// src/dao/inventoryMovementsDao.js
 const { pool } = require('../db');
 
 function appError(code, message) {

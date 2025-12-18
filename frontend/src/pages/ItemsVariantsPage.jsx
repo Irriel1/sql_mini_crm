@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { listItemVariants, deleteItemVariant } from "../api/variants";
 
 export default function ItemVariantsPage() {
-  const { itemId: itemIdParam } = useParams(); // <-- správný název parametru z routeru
+  const { itemId: itemIdParam } = useParams();
   const itemId = Number(itemIdParam);
   const nav = useNavigate();
 
@@ -31,7 +31,6 @@ export default function ItemVariantsPage() {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemIdParam]);
 
   async function onDelete(variantId) {

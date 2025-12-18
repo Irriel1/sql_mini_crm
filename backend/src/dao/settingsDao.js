@@ -1,4 +1,3 @@
-// src/dao/settingsDao.js
 const { pool } = require('../db');
 
 async function getSettings() {

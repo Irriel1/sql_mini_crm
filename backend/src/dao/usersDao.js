@@ -1,4 +1,3 @@
-// src/dao/usersDao.js
 const { pool } = require('../db');
 
 async function getUserByEmail(email) {

@@ -1,4 +1,3 @@
-// src/routes/demo.js
 const express = require('express');
 const { demoRawLogin } = require('../controllers/authController');
 const demoItemsController = require('../controllers/demoItemsController');

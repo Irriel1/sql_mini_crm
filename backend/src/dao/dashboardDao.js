@@ -1,4 +1,3 @@
-// src/dao/dashboardDao.js
 const { pool } = require('../db');
 
 async function getItemCount() {

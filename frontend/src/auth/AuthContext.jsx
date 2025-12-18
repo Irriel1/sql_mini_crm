@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { loginUser, getCurrentUser, logoutUser } from "../api/auth.js";
 import { setAuthToken, clearAuthToken } from "../api/client";
@@ -10,12 +9,12 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [isLoading, setIsLoading] = useState(true);
 
-  // 1) vždy synchronizuj axios Authorization header s tokenem
+
   useEffect(() => {
     setAuthToken(token);
   }, [token]);
 
-  // 2) ověření tokenu po načtení appky (GET /api/auth/me)
+  // ověření tokenu po načtení appky (GET /api/auth/me)
   useEffect(() => {
     let cancelled = false;
 
@@ -29,7 +28,7 @@ export function AuthProvider({ children }) {
       }
 
       try {
-        const currentUser = await getCurrentUser(); // ✅ /auth/me
+        const currentUser = await getCurrentUser();
         if (!cancelled) setUser(currentUser);
       } catch (error) {
         console.error("Auth verify failed:", error.message);
@@ -51,7 +50,7 @@ export function AuthProvider({ children }) {
     };
   }, [token]);
 
-  // 3) login: POST /api/auth/login -> uložit token + user
+  // login: POST /api/auth/login -> uložit token + user
   async function login(email, password) {
     const data = await loginUser(email, password);
 
@@ -63,16 +62,15 @@ export function AuthProvider({ children }) {
     localStorage.setItem("token", newToken);
     setAuthToken(newToken);
 
-    // Pokud backend vrací user v login response, použij ho,
-    // jinak si ho dotáhni přes /auth/me
+    // Pokud backend vrací user v login response, použijeme
+    // jinak si ho bereme přes /auth/me
     if (userData) setUser(userData);
     else setUser(await getCurrentUser());
   }
 
-  // 4) logout: FE logout vždy; BE logout jen pokud existuje
+  // logout: FE logout vždy; BE logout jen pokud existuje
   async function logout() {
     try {
-      // ⚠️ zavolej jen pokud tento endpoint reálně existuje
       await logoutUser();
     } catch (e) {
       // ignoruj

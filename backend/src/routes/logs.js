@@ -1,7 +1,5 @@
-// src/routes/logs.js
 const express = require('express');
-const { authMiddleware } = require('../middleware/auth.js');
-const { requireRole } = require('../middleware/requireRole.js');
+const { authMiddleware, requireRole } = require('../middleware/auth.js');
 const logsController = require('../controllers/logsController');
 
 const router = express.Router()

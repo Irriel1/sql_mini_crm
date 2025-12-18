@@ -1,4 +1,3 @@
-// src/config.js
 const dotenv = require('dotenv');
 const path = require('path');
 
@@ -10,6 +9,7 @@ function required(name) {
   }
   return process.env[name];
 }
+const asBool = (v) => String(v).toLowerCase() === 'true';
 
 module.exports = {
   DB_HOST: process.env.DB_HOST || '127.0.0.1',
@@ -23,5 +23,6 @@ module.exports = {
 
   JWT_SECRET: required('JWT_SECRET'),
 
-  DEMO_VULN: process.env.DEMO_VULN === 'true'
+  DEMO_VULN: asBool(process.env.DEMO_VULN),
+  DEMO_SQLI_LAB: asBool(process.env.DEMO_SQLI_LAB),
 };

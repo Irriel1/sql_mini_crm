@@ -1,4 +1,3 @@
-// frontend/src/pages/LogsPage.jsx
 import { useEffect, useMemo, useState } from "react";
 import { getLogs, getLog } from "../api/logs";
 

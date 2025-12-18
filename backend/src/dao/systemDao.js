@@ -1,4 +1,3 @@
-// src/dao/systemDao.js
 const { pool } = require('../db');
 
 async function pingDb() {

@@ -1,4 +1,3 @@
-// src/dao/itemsDao.js
 const { pool } = require('../db');
 
 const ALLOWED_SORT_COLUMNS = ['name', 'category', 'created_at'];

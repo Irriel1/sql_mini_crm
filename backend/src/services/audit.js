@@ -1,4 +1,3 @@
-// src/middlewares/audit.js
 const logsDao = require("../dao/logsDao");
 
 function buildMeta(req, meta) {
@@ -23,7 +22,7 @@ function buildMeta(req, meta) {
     return merged;
   }
 
-  // Když meta je string, zabalíme do objektu (lepší pro pozdější práci)
+  // Když meta je string, zabalíme do objektu
   if (typeof meta === "string" && meta.trim()) {
     return { ...base, note: meta.trim() };
   }

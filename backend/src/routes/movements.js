@@ -1,4 +1,3 @@
-
 const express = require('express');
 const { authMiddleware } = require('../middleware/auth.js');
 const inventoryMovementsController = require('../controllers/inventoryMovementsController');

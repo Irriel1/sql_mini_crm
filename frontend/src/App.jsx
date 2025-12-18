@@ -18,6 +18,8 @@ import MovementsPage from "./pages/MovementsPage";
 import MovementCreatePage from "./pages/MovementsCreatePage.jsx";
 import MovementDetailPage from "./pages/MovementsDetailPage.jsx";
 
+import SqliDemoPage from "./pages/SqliDemoPage.jsx";
+
 import LogsPage from "./pages/LogsPage.jsx";
 
 function App() {
@@ -53,6 +55,10 @@ function App() {
             <Route path="/movements/:id" element={<MovementDetailPage />} />
             {/* LOGS */}
             <Route path="/logs" element={<LogsPage />} />
+            {/* SqliLab */}
+            <Route path="/sqli-demo" element={<SqliDemoPage />} />
+            {/* Settings */}
+            
   
           </Route>
         </Route>

@@ -65,7 +65,7 @@ async function listMovements(req, res, next) {
       offset,
     });
 
-    // (Volitelné) audit "read/list" – můžeš odstranit, pokud nechceš logovat čtení
+    // audit "read/list"
      {/*
     await req.audit.commit({
       action: "MOVEMENTS_LIST",

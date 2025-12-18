@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getItem, deleteItem } from "../api/items";
 
-const LOW_STOCK_THRESHOLD = 5; // později natáhneme ze /api/settings
+const LOW_STOCK_THRESHOLD = 5; // později natáhneme z /api/settings
 
 export default function ItemDetailPage() {
   const { id } = useParams();

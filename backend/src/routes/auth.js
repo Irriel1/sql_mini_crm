@@ -9,9 +9,7 @@ const { authMiddleware } = require('../middleware/auth');
 // DB instance
 const { pool } = require('../db');
 
-// ===============================
 //   GET /api/auth/me
-// ===============================
 router.get('/me', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;

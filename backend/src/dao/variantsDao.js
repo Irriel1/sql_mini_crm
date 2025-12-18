@@ -1,4 +1,3 @@
-// src/dao/variantsDao.js
 const { pool } = require('../db');
 
 async function getVariantsByItemId(itemId, { limit, offset }) {
