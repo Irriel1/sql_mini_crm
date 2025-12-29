@@ -36,7 +36,7 @@ export const SQLI_PRESETS = [
     mode: "vuln",
     pattern: "time",
     target: "variants",
-    payload: "%' OR IF(1=1,SLEEP(2),0) -- ",
+    payload: "ZZZ%' OR IF(1=1,SLEEP(3),0)=0 -- ",
     durationMs: 2000,
     note: "Očekávej durationMs ~ 2000+ (server).",
   },

@@ -4,9 +4,9 @@ function buildPlan(norm) {
         pattern: norm.pattern,
         target: norm.target,
         mode: norm.mode,
-        q: norm.q,
+        q: norm.q ?? '',
         limit: norm.limit,
-        delayMs: norm.delayMs,
+        delayMs: norm.delayMs ?? 0,
       },
       note:
         "Boolean-based: v DEMO vuln režimu porovnej %' AND 1=1 --  vs  %' AND 1=2 --  (rowCount se musí lišit).",

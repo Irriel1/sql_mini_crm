@@ -55,20 +55,45 @@ async function run({ user, input }) {
 
   const requestedMode = input?.mode || 'safe';
   const norm = validateAndNormalize(input);
+  console.log("[SQLI][AFTER VALIDATE]", {
+    requestedMode,
+    normMode: norm.mode,
+    pattern: norm.pattern,
+    target: norm.target,
+    payload: norm.payload,
+    payloadLen: norm.payload ? norm.payload.length : 0,
+  });
   const strategy = getStrategy(norm.pattern);
   const plan = strategy.buildPlan(norm);
+  console.log("[SQLI][PLAN]", {
+    allowDbErrorInResponse: Boolean(plan.allowDbErrorInResponse),
+    note: plan.note,
+    factoryInput: plan.factoryInput,
+  });
+  
 
   let rows = [];
   let errOut = null;
 
   try {
     const query = create(plan.factoryInput);
+    console.log("[SQLI][QUERY]", {
+      sql: query.sql,
+      params: query.params ?? null,
+    });
+    
   
     const rowsRaw = await runQueryWithHardTimeout(query.sql, query.params, 12000);
   
     rows = Array.isArray(rowsRaw) ? rowsRaw.slice(0, 20) : [];
   } catch (err) {
-    console.error('SQLILAB ERROR:', err);
+    console.error("[SQLI][DB ERROR]", {
+      message: err?.message,
+      code: err?.code,
+      errno: err?.errno,
+      sqlMessage: err?.sqlMessage,
+    });
+    
     const msg = err?.message ? String(err.message) : 'Query failed';
     const allowDetail = Boolean(plan.allowDbErrorInResponse);
   
