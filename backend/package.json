@@ -11,6 +11,7 @@
     "db:seed": "node src/seed.js",
     "db:reset": "node src/seed.js --reset",
     "db:snapshot": "node src/dbSnapshot.js",
+    "test:baseline:auth-secure": "node scripts/authSecureBaseline.js",
     "start:vuln": "DEMO_VULN=true nodemon src/index.js"
   },
   "keywords": [],
