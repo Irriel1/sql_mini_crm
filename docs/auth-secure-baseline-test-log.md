@@ -286,8 +286,10 @@ Zavaznost: stredni
 Endpoint:
 
 - `GET /api/inventory`
+- `GET /api/inventory/:variantId`
 
 Vysledek testu: FAIL
+Stav opravy: opraveno po ctvrtem kroku fixu
 
 Aktualni vysledek:
 
@@ -308,6 +310,37 @@ Doporuceni:
 - Bud endpoint odstranit/odmountovat,
 - nebo ho chranit `authMiddleware`,
 - nebo ho ponechat jen jako zdokumentovany out-of-scope placeholder za `404`.
+
+Implementovana oprava:
+
+- Cely `inventory` placeholder router je chraneny pres `authMiddleware`.
+- Bez tokenu `GET /api/inventory` a `GET /api/inventory/:variantId` vraci `401`.
+- S validnim user tokenem endpointy stale vraci placeholder `200`, coz odpovida budoucimu read-only inventory prehledu.
+- Po oprave inventory placeholderu baseline runner probehl ciste: `58 PASS / 0 FAIL`.
+
+## Finalni baseline po opravach
+
+Po postupnych opravach vsech baseline nalezu probehl runner:
+
+```bash
+node scripts/authSecureBaseline.js
+```
+
+Finalni vysledek:
+
+| Vysledek | Pocet |
+| --- | ---: |
+| PASS | 58 |
+| FAIL | 0 |
+| SKIP | 0 |
+
+Opravene nalezy:
+
+- `AUTH-SEC-001`: verejna registrace uz neumi vytvorit admin ucet.
+- `VAR-FUNC-001`: create variant uklada `price` a `stock_count` do spravnych sloupcu.
+- `VAR-FUNC-002`: update variant pouziva spravny `WHERE id`.
+- `EXP-001`: admin placeholder endpointy jsou admin-only.
+- `EXP-002`: inventory placeholder endpointy uz nejsou verejne.
 
 ## Interpretace
 
