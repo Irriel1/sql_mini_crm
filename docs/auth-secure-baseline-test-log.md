@@ -105,6 +105,7 @@ Secure endpoint baseline:
 Zavaznost: vysoka  
 Endpoint: `POST /api/auth/register`  
 Vysledek testu: FAIL
+Stav opravy: opraveno po prvnim baseline behu
 
 Testovaci payload:
 
@@ -138,6 +139,13 @@ Doporuceni:
 - V public registraci uplne ignorovat `role` z body.
 - Napevno nastavovat `role: 'user'`.
 - Admin ucty vytvaret pouze seedem nebo samostatnym admin-only endpointem.
+
+Implementovana oprava:
+
+- `registerSchema` zakazuje pole `role` pres `Joi.forbidden()`.
+- `usersDao.createUser` dostava v public registraci vzdy `role: 'user'`.
+- Pokus poslat `role: "admin"` ted vraci `400` s odpovedi `"role" is not allowed`.
+- Po oprave se baseline runner zmenil z `52 PASS / 6 FAIL` na `53 PASS / 5 FAIL`.
 
 ### VAR-FUNC-001: Create variant vraci `201`, ale ulozi spatne hodnoty
 

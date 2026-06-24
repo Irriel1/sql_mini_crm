@@ -14,7 +14,7 @@ const registerSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
   name: Joi.string().allow('', null).optional(),
-  role: Joi.string().valid('admin', 'user').default('user'),
+  role: Joi.forbidden(),
 });
 
 // POST /login
@@ -98,7 +98,9 @@ async function register(req, res, next) {
       email: value.email,
       password_hash: hash,
       name: value.name,
-      role: value.role,
+      // Verejna registrace nikdy nesmi rozhodovat o roli.
+      // Admin ucty vytvarime seedem nebo budouci admin-only spravou uzivatelu.
+      role: 'user',
     });
 
     if (!newUser) {
