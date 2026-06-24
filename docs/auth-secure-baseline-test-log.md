@@ -246,8 +246,10 @@ Endpointy:
 
 - `GET /api/admin`
 - `POST /api/admin/reset-db`
+- `GET /api/admin/raw-sql`
 
 Vysledek testu: FAIL
+Stav opravy: opraveno po tretim kroku fixu
 
 Aktualni vysledek:
 
@@ -268,6 +270,15 @@ Doporuceni:
 - Bud je uplne odstranit,
 - nebo za ne dat `authMiddleware` + `requireRole('admin')`,
 - nebo vratit `404`, pokud nejsou soucasti soucasne demo vrstvy.
+
+Implementovana oprava:
+
+- Cely `admin` router je chraneny pres `authMiddleware` a `requireRole('admin')`.
+- Bez tokenu ted admin placeholdery vraci `401`.
+- Beznemu uzivateli vraci `403`.
+- Admin token stale dostane placeholder odpoved `200`, endpointy ale uz nejsou verejne.
+- Ochrana se vztahuje i na `GET /api/admin/raw-sql`.
+- Po oprave admin placeholderu se baseline runner zmenil z `55 PASS / 3 FAIL` na `57 PASS / 1 FAIL`.
 
 ### EXP-002: Inventory placeholder endpoint je verejne pristupny
 

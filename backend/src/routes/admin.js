@@ -1,5 +1,11 @@
 const express = require('express');
+const { authMiddleware, requireRole } = require('../middleware/auth.js');
+
 const router = express.Router();
+
+// I placeholder endpointy drzim za admin auth. Nazvy jako raw-sql/reset-db
+// by nemely byt verejne dostupne ani ve chvili, kdy zatim nic nevykonavaji.
+router.use(authMiddleware, requireRole('admin'));
 
 // GET /api/admin
 router.get('/', (req, res) => {
