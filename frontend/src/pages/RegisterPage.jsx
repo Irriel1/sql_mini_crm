@@ -19,18 +19,28 @@ export default function RegisterPage() {
     setErrorMessage('');
     setSuccess(false);
 
-    if (!isEmailValid) {
+    const formData = new FormData(e.currentTarget);
+    const submittedName = String(formData.get('name') || '').trim();
+    const submittedEmail = String(formData.get('email') || '').trim();
+    const submittedPassword = String(formData.get('password') || '');
+    const submittedEmailValid = emailRegex.test(submittedEmail);
+
+    if (!submittedEmailValid) {
       setErrorMessage('Invalid email format');
       return;
     }
 
-    if (password.length < 6) {
+    if (submittedPassword.length < 6) {
       setErrorMessage('Password must be at least 6 characters long');
       return;
     }
 
     try {
-      await registerUser(email, password, name);
+      await registerUser({
+        email: submittedEmail,
+        password: submittedPassword,
+        name: submittedName || null,
+      });
       setSuccess(true);
     } catch (err) {
       setErrorMessage(err.message);
@@ -62,10 +72,12 @@ export default function RegisterPage() {
             <label className="input-label">Name (optional)</label>
             <input
               className="input"
+              name="name"
               type="text"
               value={name}
               placeholder="John Doe"
               onChange={(e) => setName(e.target.value)}
+              autoComplete="name"
             />
           </div>
 
@@ -74,10 +86,13 @@ export default function RegisterPage() {
             <label className="input-label">Email</label>
             <input
               className="input"
+              name="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
+              autoComplete="username"
+              required
             />
             {email && !isEmailValid && (
               <p style={{ color: 'red', fontSize: 13, marginTop: 4 }}>
@@ -92,9 +107,12 @@ export default function RegisterPage() {
             <div style={{ position: 'relative' }}>
               <input
                 className="input"
+                name="password"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
+                required
               />
               <span
                 onClick={() => setShowPassword(!showPassword)}

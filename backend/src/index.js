@@ -30,7 +30,13 @@ app.use(express.json());
 app.use(auditMiddleware); // attach req.audit
 
 // health
-app.get('/health', (req, res) => res.json({ ok: true, ts: Date.now() }));
+function sendHealth(req, res) {
+  res.json({ ok: true, ts: Date.now() });
+}
+
+app.get('/health', sendHealth);
+app.get('/healthz', sendHealth);
+app.get('/api/healthz', sendHealth);
 
 // routes
 app.use('/api/sqli-demo', sqliLabRouter)

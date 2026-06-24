@@ -4,3 +4,4 @@ frontend-old/
 
 **/.env
 **/.env.*
+.DS_Store

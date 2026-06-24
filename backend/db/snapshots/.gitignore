@@ -1,0 +1,4 @@
+# Lokální dumpy databáze mohou obsahovat citlivá data.
+# V repozitáři držíme jen tento soubor, samotné snapshoty ne.
+*
+!.gitignore

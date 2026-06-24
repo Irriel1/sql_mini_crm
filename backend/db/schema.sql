@@ -1,17 +1,17 @@
 CREATE DATABASE IF NOT EXISTS sql_crm;
 USE sql_crm;
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   email VARCHAR(255) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   name VARCHAR(255),
-  role ENUM('admin','user') DEFAULT 'user',
+  role ENUM('user','admin') DEFAULT 'user',
   locale VARCHAR(10) DEFAULT 'cs',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE items (
+CREATE TABLE IF NOT EXISTS items (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   category VARCHAR(100),
@@ -20,19 +20,19 @@ CREATE TABLE items (
   deleted_at TIMESTAMP NULL DEFAULT NULL
 );
 
-CREATE TABLE item_variants (
+CREATE TABLE IF NOT EXISTS item_variants (
   id INT AUTO_INCREMENT PRIMARY KEY,
   item_id INT NOT NULL,
-  sku VARCHAR(100) NOT NULL UNIQUE,
-  variant_name VARCHAR(255) NOT NULL,
+  sku VARCHAR(100) UNIQUE,
+  variant_name VARCHAR(255),
+  attributes JSON NULL,
   price DECIMAL(12,2) NOT NULL DEFAULT 0.00,
   stock_count INT NOT NULL DEFAULT 0,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT uq_item_variant_sku UNIQUE (item_id, sku),
   FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
 );
 
-CREATE TABLE inventory_movements (
+CREATE TABLE IF NOT EXISTS inventory_movements (
   id INT AUTO_INCREMENT PRIMARY KEY,
   variant_id INT NOT NULL,
   user_id INT,
@@ -41,14 +41,13 @@ CREATE TABLE inventory_movements (
   note TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (variant_id) REFERENCES item_variants(id),
-  FOREIGN KEY (user_id) REFERENCES users(id)
-
-  INDEX (user_id)
-  INDEX (variant_id)
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  INDEX (user_id),
+  INDEX (variant_id),
   INDEX (created_at)
 );
 
-CREATE TABLE logs (
+CREATE TABLE IF NOT EXISTS logs (
   id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT,
   action VARCHAR(255),
@@ -57,7 +56,7 @@ CREATE TABLE logs (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-CREATE TABLE settings (
+CREATE TABLE IF NOT EXISTS settings (
   id INT PRIMARY KEY,
   warehouse_name VARCHAR(255),
   currency CHAR(3) DEFAULT 'CZK',
@@ -97,4 +96,3 @@ CREATE INDEX idx_movements_type_created ON inventory_movements (type, created_at
 -- LOGS: audit filtry user/action + date range
 CREATE INDEX idx_logs_user_created ON logs (user_id, created_at);
 CREATE INDEX idx_logs_action_created ON logs (action, created_at);
-

@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [err, setErr] = useState('');
@@ -16,9 +18,13 @@ export default function LoginPage() {
     e.preventDefault();
     setErr('');
 
+    const formData = new FormData(e.currentTarget);
+    const submittedEmail = String(formData.get('email') || '').trim();
+    const submittedPassword = String(formData.get('password') || '');
+
     try {
-      await login(email, password);
-      window.location.href = '/'; // redirect to dashboard/root
+      await login(submittedEmail, submittedPassword);
+      navigate('/', { replace: true });
     } catch (error) {
       setErr(error.message);
     }
@@ -38,10 +44,13 @@ export default function LoginPage() {
             <label className="input-label">Email</label>
             <input
               className="input"
+              name="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
+              autoComplete="username"
+              required
             />
             {email && !isEmailValid && (
               <p style={{ color: 'red', fontSize: 13, marginTop: 4 }}>
@@ -56,9 +65,12 @@ export default function LoginPage() {
             <div style={{ position: 'relative' }}>
               <input
                 className="input"
+                name="password"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
               />
               <span
                 onClick={() => setShowPassword(!showPassword)}

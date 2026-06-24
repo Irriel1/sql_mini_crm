@@ -14,14 +14,10 @@ router.get('/me', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const result = await pool.query(
+    const [rows] = await pool.query(
       'SELECT id, email, name, role, created_at FROM users WHERE id = ? LIMIT 1',
       [userId]
     );
-
-    // mysql2 vrací [rows, fields]
-    // mysql vrací přímo rows
-    const rows = Array.isArray(result) ? result : result[0];
 
     if (!rows || rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });

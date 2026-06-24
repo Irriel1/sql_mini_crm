@@ -19,10 +19,22 @@ async function migrate() {
   const sql = fs.readFileSync(schemaPath, 'utf8');
   const conn = await pool.getConnection();
   try {
-    // split by ; and run statements (simple)
-    const statements = sql.split(/;\s*$/m).map(s => s.trim()).filter(Boolean); // rozdělí obsah souboru schema.sql na jednotlivé příkazy podle středníku na konci řádku.
+    // Jednoducha migrace pro studentsky projekt: schema.sql rozdelime podle stredniku
+    // na konci radku. Neni to plnohodnotny migracni framework, ale pro nase CREATE/INDEX
+    // prikazy je to citelne a dostacujici.
+    const statements = sql.split(/;\s*$/m).map(s => s.trim()).filter(Boolean);
     for (const s of statements) {
-      await conn.query(s);
+      try {
+        await conn.query(s);
+      } catch (err) {
+        // Opakovane spusteni migrace muze narazit na existujici index.
+        // Tabulky pouzivaji IF NOT EXISTS, duplicitni index tedy jen preskocime.
+        if (err.code === 'ER_DUP_KEYNAME') {
+          console.warn(`Skipping existing index: ${err.sqlMessage}`);
+          continue;
+        }
+        throw err;
+      }
     }
     console.log('Migrations applied.');
   } finally {

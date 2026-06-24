@@ -6,7 +6,11 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "migrate": "node -e \"require('./src/db').migrate()\"",
+    "migrate": "node -e \"const db=require('./src/db'); db.migrate().catch((err)=>{console.error(err); process.exitCode=1;}).finally(()=>db.pool.end())\"",
+    "seed": "node src/seed.js",
+    "db:seed": "node src/seed.js",
+    "db:reset": "node src/seed.js --reset",
+    "db:snapshot": "node src/dbSnapshot.js",
     "start:vuln": "DEMO_VULN=true nodemon src/index.js"
   },
   "keywords": [],
