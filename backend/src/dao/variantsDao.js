@@ -26,24 +26,18 @@ async function createVariant(itemId, data) {
   const {
     sku,
     variant_name,
-    attributes,
     price,
     stock_count,
   } = data || {};
 
-  const attrsValue =
-    attributes && typeof attributes === 'object'
-      ? JSON.stringify(attributes)
-      : attributes || null;
-
   const [result] = await pool.query(
     `INSERT INTO item_variants (item_id, sku, variant_name, price, stock_count)
      VALUES (?, ?, ?, ?, ?)`,
+    // Poradi hodnot musi presne odpovidat poradi sloupcu v INSERTu.
     [
       itemId,
       sku || null,
       variant_name,
-      attrsValue,
       price != null ? price : 0,
       stock_count != null ? stock_count : 0,
     ]
@@ -63,24 +57,18 @@ async function updateVariant(id, data) {
   const {
     sku,
     variant_name,
-    attributes,
     price,
     stock_count,
   } = data || {};
-
-  const attrsValue =
-    attributes && typeof attributes === 'object'
-      ? JSON.stringify(attributes)
-      : attributes || null;
 
   const [result] = await pool.query(
     `UPDATE item_variants
      SET sku = ?, variant_name = ?, price = ?, stock_count = ?
      WHERE id = ?`,
+    // Poradi hodnot musi presne odpovidat SET casti a posledni hodnota patri WHERE id.
     [
       sku || null,
       variant_name,
-      attrsValue,
       price != null ? price : 0,
       stock_count != null ? stock_count : 0,
       id,

@@ -152,6 +152,7 @@ Implementovana oprava:
 Zavaznost: stredni  
 Endpoint: `POST /api/items/:itemId/variants`  
 Vysledek testu: FAIL
+Stav opravy: opraveno po druhem kroku fixu
 
 Ocekavani:
 
@@ -193,11 +194,18 @@ Doporuceni:
 - Bud pridat `attributes` do SQL column listu,
 - nebo odstranit `attrsValue` z hodnot, pokud `attributes` nema byt podporovane pres API.
 
+Implementovana oprava:
+
+- `variantsDao.createVariant` uz neposila `attrsValue` do SQL hodnot.
+- Poradi hodnot ted odpovida sloupcum `item_id, sku, variant_name, price, stock_count`.
+- Cileny test potvrdil `price = 1234.50` a `stock_count = 9`.
+
 ### VAR-FUNC-002: Update variant vraci `404` kvuli spatnemu poradi parametru
 
 Zavaznost: stredni  
 Endpoint: `PUT /api/variants/:id`  
 Vysledek testu: FAIL
+Stav opravy: opraveno po druhem kroku fixu
 
 Ocekavani:
 
@@ -223,6 +231,13 @@ Doporuceni:
 
 - Srovnat SQL placeholdery a pole hodnot.
 - Po oprave znovu spustit baseline runner.
+
+Implementovana oprava:
+
+- `variantsDao.updateVariant` uz neposila `attrsValue` jako extra hodnotu.
+- Posledni parametr v poli hodnot je znovu spravne `id` pro `WHERE id = ?`.
+- Cileny test potvrdil `200 OK`, novy `sku`, `price = 1500.00` a `stock_count = 11`.
+- Po oprave variant se baseline runner zmenil z `53 PASS / 5 FAIL` na `55 PASS / 3 FAIL`.
 
 ### EXP-001: Admin placeholder endpointy jsou verejne pristupne
 
