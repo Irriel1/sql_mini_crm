@@ -1,16 +1,15 @@
 function buildPlan(norm) {
-    return {
-      factoryInput: {
-        pattern: norm.pattern,
-        target: norm.target,
-        mode: norm.mode,
-        q: norm.q ?? '',
-        limit: norm.limit,
-        delayMs: norm.delayMs ?? 0,
-      },
-      note:
-        "UNION-based: v DEMO vuln režimu zkus zavřít string a přidat UNION SELECT se stejným počtem sloupců.",
-    };
-  }
-  
-  module.exports = { buildPlan };  
+  return {
+    factoryInput: {
+      pattern: norm.pattern,
+      target: norm.target,
+      mode: norm.mode,
+      q: norm.q ?? '',
+      limit: norm.limit,
+    },
+    note:
+      "UNION-based: v DEMO vuln režimu zkus zavřít string a přidat UNION SELECT se stejným počtem sloupců.",
+  };
+}
+
+module.exports = { buildPlan };

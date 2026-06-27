@@ -43,14 +43,6 @@ function validateAndNormalize(input = {}) {
   const limit = Number.isFinite(limitRaw)
     ? Math.max(1, Math.min(50, limitRaw))
     : 20;
-  // TIME-BASED DELAY
-  // FE sends "durationMs"
-  // backend uses "delayMs"
-  const delayInput = input.durationMs ?? input.delayMs ?? 0;
-  const delayMsRaw = Number(delayInput);
-  const delayMs = Number.isFinite(delayMsRaw)
-    ? Math.max(0, Math.min(5000, delayMsRaw))
-    : 0;
 
   return {
     pattern,
@@ -58,7 +50,6 @@ function validateAndNormalize(input = {}) {
     mode,
     q,          // ← payload propagates
     limit,
-    delayMs, 
   };
 }
 

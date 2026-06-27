@@ -631,8 +631,7 @@ Expected: controlled DB error visible only in demo/lab context, not in secure en
   "mode": "vuln",
   "pattern": "time",
   "target": "variants",
-  "payload": "ZZZ%' OR IF(1=1,SLEEP(3),0)=0 -- ",
-  "durationMs": 3000
+  "payload": "ZZZ%' OR IF(1=1,SLEEP(2),0)=0 -- "
 }
 ```
 
@@ -643,12 +642,11 @@ Control:
   "mode": "vuln",
   "pattern": "time",
   "target": "variants",
-  "payload": "ZZZ%' OR IF(1=2,SLEEP(3),0)=0 -- ",
-  "durationMs": 3000
+  "payload": "ZZZ%' OR IF(1=2,SLEEP(2),0)=0 -- "
 }
 ```
 
-Expected: true condition is measurably slower than false condition. The implementation should keep the query deterministic and limited to one row so `SLEEP` does not run once per row.
+Expected: true condition is measurably slower than false condition. The delay is controlled by the injected `SLEEP(...)` expression in the payload. The implementation should keep the query deterministic and limited to one row so `SLEEP` does not run once per row.
 
 ### Target Validation
 

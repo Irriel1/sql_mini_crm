@@ -41,7 +41,6 @@ export default function SqliDemoPage() {
     pattern: defaultPreset.pattern,
     target: defaultPreset.target,
     payload: defaultPreset.payload,
-    durationMs: defaultPreset.durationMs ?? "",
   });
 
   const [isRunning, setIsRunning] = useState(false);
@@ -70,7 +69,6 @@ export default function SqliDemoPage() {
               pattern: p.pattern,
               target: p.target,
               payload: p.payload,
-              durationMs: p.durationMs ?? "",
             });
             setInlineError("");
           }}
@@ -102,7 +100,6 @@ export default function SqliDemoPage() {
       pattern: form.pattern,
       target: form.target,
       payload: form.payload,
-      ...(String(form.durationMs).trim() !== "" ? { durationMs: Number(form.durationMs) } : {}),
     };
 
     const t0 = performance.now();
@@ -234,17 +231,6 @@ export default function SqliDemoPage() {
               value={form.payload}
               onChange={(e) => setForm((p) => ({ ...p, payload: e.target.value }))}
               placeholder="např. %' OR IF(1=1,SLEEP(2),0) -- "
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="input-label">durationMs (optional)</label>
-            <input
-              className="input"
-              type="number"
-              value={form.durationMs}
-              onChange={(e) => setForm((p) => ({ ...p, durationMs: e.target.value }))}
-              placeholder="např. 2000"
             />
           </div>
 
