@@ -1,6 +1,7 @@
 const Joi = require('joi');
 const variantsDao = require('../dao/variantsDao');
 const itemsDao = require('../dao/itemsDao');
+const { parsePositiveIntParam } = require('../utils/params');
 
 const listByItemSchema = Joi.object({
   limit: Joi.number().integer().min(1).max(100).optional(),
@@ -17,8 +18,8 @@ const variantBodySchema = Joi.object({
 // GET /api/items/:itemId/variants
 async function listVariantsForItem(req, res, next) {
   try {
-    const itemId = parseInt(req.params.itemId, 10);
-    if (Number.isNaN(itemId)) {
+    const itemId = parsePositiveIntParam(req.params.itemId);
+    if (itemId === null) {
       return res.status(400).json({ error: 'Invalid itemId' });
     }
 
@@ -46,8 +47,8 @@ async function listVariantsForItem(req, res, next) {
 // POST /api/items/:itemId/variants
 async function createVariantForItem(req, res, next) {
   try {
-    const itemId = parseInt(req.params.itemId, 10);
-    if (Number.isNaN(itemId)) {
+    const itemId = parsePositiveIntParam(req.params.itemId);
+    if (itemId === null) {
       return res.status(400).json({ error: 'Invalid itemId' });
     }
 
@@ -91,8 +92,8 @@ async function createVariantForItem(req, res, next) {
 // GET /api/variants/:id
 async function getVariant(req, res, next) {
   try {
-    const id = parseInt(req.params.id, 10);
-    if (Number.isNaN(id)) {
+    const id = parsePositiveIntParam(req.params.id);
+    if (id === null) {
       return res.status(400).json({ error: 'Invalid id' });
     }
 
@@ -110,8 +111,8 @@ async function getVariant(req, res, next) {
 // PUT /api/variants/:id
 async function updateVariant(req, res, next) {
   try {
-    const id = parseInt(req.params.id, 10);
-    if (Number.isNaN(id)) {
+    const id = parsePositiveIntParam(req.params.id);
+    if (id === null) {
       return res.status(400).json({ error: 'Invalid id' });
     }
 
@@ -159,8 +160,8 @@ async function updateVariant(req, res, next) {
 // DELETE /api/variants/:id
 async function deleteVariant(req, res, next) {
   try {
-    const id = parseInt(req.params.id, 10);
-    if (Number.isNaN(id)) return res.status(400).json({ error: 'Invalid id' });
+    const id = parsePositiveIntParam(req.params.id);
+    if (id === null) return res.status(400).json({ error: 'Invalid id' });
 
     // 1) pokud varianta neexistuje
     const exists = await variantsDao.getVariantById(id);

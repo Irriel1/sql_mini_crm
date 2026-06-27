@@ -1,6 +1,7 @@
 // src/controllers/itemsController.js
 const Joi = require('joi');
 const itemsDao = require('../dao/itemsDao');
+const { parsePositiveIntParam } = require('../utils/params');
 
 const listItemsSchema = Joi.object({
   search: Joi.string().allow('').optional(),
@@ -79,10 +80,9 @@ async function listItems(req, res, next) { // seznam položek
 
 async function getItem(req, res, next) {
   try {
-    const id = Number(req.params.id);
+    const id = parsePositiveIntParam(req.params.id);
 
-    // přísnější validace než parseInt (nepropustí "12abc")
-    if (!Number.isInteger(id) || id <= 0) {
+    if (id === null) {
       return res.status(400).json({ error: "Invalid id" });
     }
 
@@ -114,8 +114,8 @@ async function getItem(req, res, next) {
 
 async function updateItem(req, res, next) { // aktualizovat existující položku
   try {
-    const id = parseInt(req.params.id, 10);
-    if (Number.isNaN(id)) {
+    const id = parsePositiveIntParam(req.params.id);
+    if (id === null) {
       return res.status(400).json({ error: 'Invalid id' });
     }
 
@@ -147,8 +147,8 @@ async function updateItem(req, res, next) { // aktualizovat existující položk
 
 async function deleteItem(req, res, next) { // smazat položku (soft delete)
   try {
-    const id = parseInt(req.params.id, 10);
-    if (Number.isNaN(id)) {
+    const id = parsePositiveIntParam(req.params.id);
+    if (id === null) {
       return res.status(400).json({ error: 'Invalid id' });
     }
 

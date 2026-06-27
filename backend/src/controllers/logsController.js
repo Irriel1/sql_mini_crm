@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const logsDao = require('../dao/logsDao');
+const { parsePositiveIntParam } = require('../utils/params');
 
 const listSchema = Joi.object({
   user_id: Joi.number().integer().min(1).optional(),
@@ -42,8 +43,8 @@ async function listLogs(req, res, next) {
 // GET /api/logs/:id
 async function getLog(req, res, next) {
   try {
-    const id = Number(req.params.id);
-    if (Number.isNaN(id)) {
+    const id = parsePositiveIntParam(req.params.id);
+    if (id === null) {
       return res.status(400).json({ error: 'Invalid id' });
     }
 

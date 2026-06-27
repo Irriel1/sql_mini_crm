@@ -2,6 +2,7 @@
 const Joi = require('joi');
 const inventoryMovementsDao = require('../dao/inventoryMovementsDao');
 const variantsDao = require('../dao/variantsDao');
+const { parsePositiveIntParam } = require('../utils/params');
 
 /**
  * SAFE list schema (tight validation)
@@ -145,8 +146,8 @@ async function listMovementsVuln(req, res, next) {
  */
 async function getMovement(req, res, next) {
   try {
-    const id = parseInt(req.params.id, 10);
-    if (Number.isNaN(id)) return res.status(400).json({ error: 'Invalid id' });
+    const id = parsePositiveIntParam(req.params.id);
+    if (id === null) return res.status(400).json({ error: 'Invalid id' });
 
     const movement = await inventoryMovementsDao.getMovementById(id);
     if (!movement) return res.status(404).json({ error: 'Not found' });
