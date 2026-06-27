@@ -11,7 +11,7 @@ function parseApiErrorStatus(error) {
 }
 
 export function SettingsProvider({ children }) {
-const { isLoading: authLoading, isAuthenticated } = useAuth();
+  const { isLoading: authLoading, isAuthenticated } = useAuth();
   const [settings, setSettings] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setErr] = useState("");
@@ -34,7 +34,15 @@ const { isLoading: authLoading, isAuthenticated } = useAuth();
     setErr("");
     try {
       const saved = await apiUpdateSettings(patchOrFull);
-      setSettings(saved);
+
+      setSettings((prev) => {
+        return (
+          saved?.settings ??
+          saved ??
+          { ...(prev || {}), ...(patchOrFull || {}) }
+        );
+      });
+
       return saved;
     } catch (e) {
       const status = parseApiErrorStatus(e);
@@ -43,31 +51,6 @@ const { isLoading: authLoading, isAuthenticated } = useAuth();
       throw e;
     }
   }
-
-  async function updateSettings(patchOrFull) {
-    setErr("");
-    try {
-      const saved = await apiUpdateSettings(patchOrFull);
-  
-      setSettings((prev) => {
-        const next =
-          saved?.settings ??
-          saved ??
-          { ...(prev || {}), ...(patchOrFull || {}) };
-      
-        return next;
-      });
-
-  
-      return saved;
-    } catch (e) {
-        const status = parseApiErrorStatus(e);
-        const msg = e?.message || "Failed to save settings";
-        setErr(status === 401 || status === 403 ? `Admin only. ${msg}` : msg);
-        throw e;
-    }
-  }
-  
 
   // load once on app start
   useEffect(() => {

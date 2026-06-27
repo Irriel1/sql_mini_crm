@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { getDashboard } from "../api/dashboard";
+import { useSettings } from "../context/SettingsContext";
 import { Navigate } from "react-router-dom";
 
 export default function DashboardPage() {
   const { token, isLoading: authLoading, isAuthenticated } = useAuth();
+  const { settings } = useSettings();
+  const lowStockThreshold = settings?.low_stock_threshold;
 
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,7 +52,7 @@ export default function DashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, [authLoading, isAuthenticated, token]);
+  }, [authLoading, isAuthenticated, token, lowStockThreshold]);
 
   // pokud už ověření skončilo a nejsi přihlášený, přesměrování na login
   if (!authLoading && !isAuthenticated) {
