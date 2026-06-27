@@ -13,6 +13,7 @@
     "db:snapshot": "node src/dbSnapshot.js",
     "test:baseline:auth-secure": "node scripts/authSecureBaseline.js",
     "test:security:sqli-negative": "node scripts/secureSqliNegative.js",
+    "test:demo:vulnerable": "node scripts/vulnerableBranchTests.js",
     "start:vuln": "DEMO_VULN=true nodemon src/index.js"
   },
   "keywords": [],
