@@ -2,15 +2,24 @@ const { DEMO_VULN } = require('../../config');
 
 const PATTERNS = new Set(['boolean', 'union', 'error', 'time']);
 const TARGETS = new Set(['items', 'variants', 'users']);
+const MODES = new Set(['safe', 'vuln']);
+
+function validationError(message) {
+  const err = new Error(message);
+  err.status = 400;
+  return err;
+}
 
 function validateAndNormalize(input = {}) {
   const pattern = String(input.pattern || 'boolean');
   const target = String(input.target || 'items');
 
-  if (!PATTERNS.has(pattern)) throw new Error('Invalid pattern');
-  if (!TARGETS.has(target)) throw new Error('Invalid target');
+  if (!PATTERNS.has(pattern)) throw validationError('Invalid pattern');
+  if (!TARGETS.has(target)) throw validationError('Invalid target');
   // MODE: SAFE / VULN
   const requestedMode = String(input.mode || 'safe');
+  if (!MODES.has(requestedMode)) throw validationError('Invalid mode');
+
   const mode =
     requestedMode === 'vuln' && DEMO_VULN
       ? 'vuln'
@@ -27,7 +36,7 @@ function validateAndNormalize(input = {}) {
   const q = String(qRaw).trimStart();
 
   if (q.length > 200) {
-    throw new Error('Payload too long');
+    throw validationError('Payload too long');
   }
   // LIMIT
   const limitRaw = Number(input.limit ?? 20);

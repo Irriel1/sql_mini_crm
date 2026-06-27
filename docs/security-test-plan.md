@@ -747,7 +747,7 @@ Screenshots/evidence useful for thesis:
 2. `backend/src/index.js` mounts `/api/demo` movement routes twice when `DEMO_VULN=true`.
 3. `POST /api/admin/reset-db` is currently public placeholder. Decide whether to protect or remove it.
 4. `/api/inventory` placeholder endpoints are public. Decide whether this is acceptable.
-5. SQLi Lab validator allows `target=users`, but query factory intentionally supports only `items` and `variants` for now. Align validator with implemented targets unless a `movements` target is added.
+5. SQLi Lab `target=users` was aligned with the implementation during Phase A step 8. It is now a supported admin-only lab target, but the default preview intentionally excludes `password_hash`.
 6. Some lint issues remain outside the auth fix, including duplicate `updateSettings` in `frontend/src/context/SettingsContext.jsx`.
 
 ## 12. Proposed Execution Order

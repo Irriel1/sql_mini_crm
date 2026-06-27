@@ -1,6 +1,6 @@
 export const MODE_OPTIONS = ["safe", "vuln"];
 export const PATTERN_OPTIONS = ["boolean", "union", "error", "time"];
-export const TARGET_OPTIONS = ["items", "variants"];
+export const TARGET_OPTIONS = ["items", "variants", "users"];
 
 export const SQLI_PRESETS = [
   {
@@ -14,12 +14,21 @@ export const SQLI_PRESETS = [
   },
   {
     id: "union-basic",
-    label: "UNION: basic",
+    label: "UNION: variants row",
     mode: "vuln",
     pattern: "union",
     target: "variants",
-    payload: "%' UNION SELECT 1,2,3,4,5 -- ",
-    note: "Uprav SELECT podle toho, co backend očekává pro UNION pattern.",
+    payload: "%' UNION SELECT 999002,'UNION-SKU','Union Variant',1,1,'Union Item' -- ",
+    note: "Očekávej syntetický řádek ve variants dataPreview.",
+  },
+  {
+    id: "union-users-row",
+    label: "UNION: users row",
+    mode: "vuln",
+    pattern: "union",
+    target: "users",
+    payload: "%' UNION SELECT 999003,'union-user@example.com','Union User','admin',NOW() -- ",
+    note: "Očekávej syntetický users řádek bez standardního výpisu password_hash.",
   },
   {
     id: "error-union-mismatch",

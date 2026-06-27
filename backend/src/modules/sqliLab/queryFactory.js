@@ -62,6 +62,22 @@ const TARGET_SPECS = {
       vuln: (q) => `v.sku LIKE '%${q}%'`,
     },
   },
+
+  users: {
+    name: "users",
+    // Users target ma akademickou hodnotu pro ukazku dopadu SQLi na ucty.
+    // Bezny SELECT zamerne nevraci password_hash; lab je admin-only, ale vystup
+    // ma byt citelny pro demonstraci, ne primarne pro exfiltraci citlivych hashu.
+    selectColumns: ["id", "email", "name", "role", "created_at"],
+    fromClause: "FROM users",
+    baseWhere: [],
+    defaultOrderBy: "id DESC",
+    deterministicWhere: "id = (SELECT MIN(id) FROM users)",
+    search: {
+      safe: (q) => ({ sql: "email LIKE ?", params: [`%${q}%`] }),
+      vuln: (q) => `email LIKE '%${q}%'`,
+    },
+  },
 };
 
 function buildWhereParts({ spec, opts, mode, q }) {
