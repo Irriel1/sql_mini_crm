@@ -226,7 +226,6 @@ Implementovana oprava:
   - `variantsController`
   - `inventoryMovementsController`
   - `logsController`
-- Historicky demo controller `demoItemsController` nebyl zamerne menen, protoze patri k neaktivni/legacy demo vrstve.
 
 Overeni po oprave:
 

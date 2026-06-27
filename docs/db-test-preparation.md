@@ -140,10 +140,10 @@ Tyto body nevznikly jako soucast DB seedu, ale objevily se pri priprave:
 
 | Oblast | Poznamka |
 | --- | --- |
-| `demo.js` | Obsahuje historicke raw item endpointy, ale aktualne neni mountnuty v aplikaci. |
-| `/api/demo` | `demoMovementsRoutes` je v `backend/src/index.js` pripojen dvakrat; pro finalni demo je vhodne to uklidit. |
+| `demo.js` | Historicke raw item endpointy byly odstraneny jako superseded cleanup; aktualni demo plocha je `demoMovementsRoutes`, raw login a SQLi Lab. |
+| `/api/demo` | Duplicitni mount `demoMovementsRoutes` v `backend/src/index.js` byl odstranen; router je pripojen pouze jednou. |
 | `item_variants.attributes` | Realna lokalni DB sloupec `attributes` ma, ale puvodni `schema.sql` s nim nebyl plne sladene. |
-| `variantsDao` | Create/update varianta pracuje s `attributes`, ale aktualni SQL dotaz vypada podezrele a je vhodny pro samostatny funkcni test. |
+| `variantsDao` | Create/update varianta byla overena v auth + secure baseline testech; mapovani hodnot bylo opraveno. |
 | `schema.sql` | Pri priprave byl srovnan s realnou DB v oblasti `item_variants.attributes` a opraveny carky/indexy u `inventory_movements`. |
 
 ## Doporučeny postup pred dalsim testovanim

@@ -2,7 +2,6 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const { PORT } = require('./config');
-const { DEMO_VULN } = require('./config');
 
 const authRoutes = require('./routes/auth');
 const itemsRoutes = require('./routes/items');
@@ -52,15 +51,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/items', itemsRoutes);
 app.use('/api/inventory-movements', movementsRoutes); // SAFE
 app.use('/api/demo', demoMovementsRoutes); // VULN
-
-
-
-
-// demo vulnerable route
-if (DEMO_VULN) {
-  const demoMovementsRoutes = require('./routes/demoMovements');
-  app.use('/api/demo', demoMovementsRoutes);
-}
 
 // error handling;
 

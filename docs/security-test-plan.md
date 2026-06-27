@@ -130,7 +130,7 @@ These should be reviewed before thesis demo. Even placeholder admin/reset endpoi
 | `POST /api/demo/inventory-movements` | auth + admin + safe write | uses safe create path |
 | `POST /api/auth/demo/raw-login` | demo vulnerable login | raw SQL in email lookup |
 
-Decision: `backend/src/routes/demo.js` is treated as an intentionally unused historical prototype from the early vulnerability experiments. The current planned demonstration surface is `/api/demo/inventory-movements` plus `/api/sqli-demo/run`. Do not mount `routes/demo.js` unless the thesis scope explicitly needs the older raw item endpoints.
+Current demonstration surface: `/api/demo/inventory-movements`, `/api/auth/demo/raw-login`, and `/api/sqli-demo/run`.
 
 ### SQLi Lab
 
@@ -142,9 +142,9 @@ Supported by current code:
 
 - `mode`: `safe`, `vuln`
 - `pattern`: `boolean`, `union`, `error`, `time`
-- intended targets in query factory: `items`, `variants`
+- intended targets in query factory: `items`, `variants`, `users`
 
-Decision for now: SQLi Lab should expose only implemented and documented targets. Keep `items` and `variants` as the primary targets. Consider `movements` as a future target only if we need a lab version of the inventory movement demo. Do not expose `users` as a normal first-class target unless the thesis explicitly needs it; user-data exposure can be demonstrated through controlled UNION payloads in vuln mode.
+Decision for now: SQLi Lab exposes only implemented and documented targets. `items` and `variants` cover application data; `users` is included as an admin-only academic target, with the default preview intentionally excluding `password_hash`. Consider `movements` as a future target only if we need a lab version of the inventory movement demo.
 
 ### Specification vs Current Implementation Deltas
 
@@ -154,13 +154,13 @@ The model-application specification describes the intended design and developmen
 | --- | --- | --- | --- |
 | Auth routes | Notes mention `POST /api/login`, `POST /api/logout`, `GET /api/me` | Current routes are `POST /api/auth/login`, `POST /api/auth/register`, `GET /api/auth/me`; logout is frontend-only and backend returns 404 | Test current routes; document route naming difference |
 | Items filters | `search`, `category`, `sort`, `dir`, `page`, `limit`; response from `v_items_with_stock` | Current safe list supports `search`, `limit`, `offset`, `sort`, `dir`; no `category` or `page`; DAO selects from `items`, not the view | Add negative/compatibility tests for unsupported spec params |
-| Item demo branches | Spec mentions demo on list/detail/update/delete, including unsafe dynamic `SET` | Current mounted demo branch does not expose item raw endpoints; `routes/demo.js` is an intentionally unused historical prototype | Document as superseded by SQLi Lab / movement demo |
+| Item demo branches | Spec mentions demo on list/detail/update/delete, including unsafe dynamic `SET` | Current implementation does not expose separate raw item demo endpoints | Document as superseded by SQLi Lab / movement demo |
 | Variants filters | `sku`, attributes, min/max stock | Current list by item supports only `limit`, `offset`; body does not include `attributes` | Add "not implemented" tests for spec-only filters; decide if attributes are future work |
 | Movements filters | `variant_id`, `type`, `date_from`, `date_to`, `user_id` | Secure endpoint supports `variant_id`, `type`, `note`, `limit`, `offset`; demo vuln endpoint supports the wider filter set | Test secure endpoint as reduced safe surface; test wider filters only on demo vuln route |
 | Logs filters | `user_id`, `action`, `date_from`, `date_to` | Current logs support `user_id`, `action`, `limit`, `offset`; no date filters | Add date filter as gap/future work |
 | Admin raw SQL | `GET /api/admin/raw-sql?q=` only when `DEMO_VULN=true`, protected | Current endpoint is public placeholder and does not execute SQL | Protect/remove before final demo or keep as documented placeholder |
 | Inventory placeholder | Specification treats movements as core inventory module | `/api/inventory` placeholder endpoints are public and not part of current workflow | Protect/remove/place behind auth or document as out of scope |
-| SQLi Lab targets | Notes mention targets such as `items`, `users`, `variants` | Validator allows `users`; query factory implements only `items` and `variants` | Prefer fixing validator to `items`/`variants`; add `movements` only if needed |
+| SQLi Lab targets | Notes mention targets such as `items`, `users`, `variants` | Query factory supports `items`, `variants`, and admin-only `users` preview without `password_hash` | Keep current target set; add `movements` only if needed |
 | Single tenancy | Notes explicitly define app as single-tenant demo | Current schema has no `workspace_id` | Do not test tenant isolation as part of SQLi scope; mention as future work |
 
 ## 5. Baseline Functional Tests
@@ -743,12 +743,10 @@ Screenshots/evidence useful for thesis:
 
 ## 11. Initial Findings To Review Before Running Full Suite
 
-1. `backend/src/routes/demo.js` is intentionally unused historical prototype code. Keep it unmounted and document that the current demo surface is SQLi Lab plus `/api/demo/inventory-movements`.
-2. `backend/src/index.js` mounts `/api/demo` movement routes twice when `DEMO_VULN=true`.
-3. `POST /api/admin/reset-db` is currently public placeholder. Decide whether to protect or remove it.
-4. `/api/inventory` placeholder endpoints are public. Decide whether this is acceptable.
-5. SQLi Lab `target=users` was aligned with the implementation during Phase A step 8. It is now a supported admin-only lab target, but the default preview intentionally excludes `password_hash`.
-6. Some lint issues remain outside the auth fix, including duplicate `updateSettings` in `frontend/src/context/SettingsContext.jsx`.
+1. `POST /api/admin/reset-db` is currently public placeholder. Decide whether to protect or remove it.
+2. `/api/inventory` placeholder endpoints are public. Decide whether this is acceptable.
+3. SQLi Lab `target=users` was aligned with the implementation during Phase A step 8. It is now a supported admin-only lab target, but the default preview intentionally excludes `password_hash`.
+4. Some lint issues remain outside the auth fix, including duplicate `updateSettings` in `frontend/src/context/SettingsContext.jsx`.
 
 ## 12. Proposed Execution Order
 
