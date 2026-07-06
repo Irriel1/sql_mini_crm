@@ -611,3 +611,80 @@
     width: auto;
   }
 }
+
+/* =========================
+   SQLi Lab page
+   ========================= */
+
+.sqli-page {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.sqli-page .card,
+.sqli-page .dashboard-card,
+.sqli-page .dashboard-list,
+.sqli-page .dashboard-list-item,
+.sqli-page .dashboard-list-main,
+.sqli-page .dashboard-list-meta {
+  min-width: 0;
+}
+
+.sqli-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sqli-presets .button {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.sqli-result-row,
+.sqli-history-row {
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.sqli-row-json {
+  width: 100%;
+  max-width: 100%;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.sqli-json-preview,
+.sqli-raw-response {
+  max-width: 100%;
+  margin: 0;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  overflow-x: auto;
+  white-space: pre;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.sqli-json-preview {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+@media (max-width: 767px) {
+  .sqli-result-row,
+  .sqli-history-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sqli-history-row .dashboard-list-meta {
+    justify-self: start;
+  }
+}

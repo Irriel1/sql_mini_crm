@@ -139,7 +139,7 @@ export default function SqliDemoPage() {
   }
 
   return (
-    <div style={{ display: "grid", gap: 16 }}>
+    <div className="sqli-page">
       <div className="card">
         <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 6 }}>
           SQL Injection Demo
@@ -152,191 +152,178 @@ export default function SqliDemoPage() {
       {/* Presets */}
       <div className="card">
         <div style={{ fontWeight: 700, marginBottom: 10 }}>Presets</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>{chips}</div>
+        <div className="sqli-presets">{chips}</div>
         <div style={{ fontSize: 12, opacity: 0.7, marginTop: 10 }}>
           Preset pouze vyplní formulář — payload můžeš kdykoli upravit ručně.
         </div>
       </div>
 
-      {/* Form + Result */}
-      <div className="dashboard-grid" style={{ alignItems: "start" }}>
-        {/* FORM */}
-        <div className="card">
-          <div style={{ fontWeight: 700, marginBottom: 10 }}>Run</div>
+      {/* FORM */}
+      <div className="card">
+        <div style={{ fontWeight: 700, marginBottom: 10 }}>Run</div>
 
-          {inlineError ? (
-            <div
-              style={{
-                border: "1px solid #ef4444",
-                background: "#fef2f2",
-                padding: 10,
-                borderRadius: 6,
-                marginBottom: 12,
-                fontSize: 14,
-              }}
-            >
-              {inlineError}
-            </div>
-          ) : null}
-
-          <div className="form-group">
-            <label className="input-label">Mode</label>
-            <select
-              className="input"
-              value={form.mode}
-              onChange={(e) => setForm((p) => ({ ...p, mode: e.target.value }))}
-            >
-              {MODE_OPTIONS.map((m) => (
-                <option key={m} value={m}>
-                  {m}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="input-label">Pattern</label>
-            <select
-              className="input"
-              value={form.pattern}
-              onChange={(e) => setForm((p) => ({ ...p, pattern: e.target.value }))}
-            >
-              {PATTERN_OPTIONS.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="input-label">Target</label>
-            <select
-              className="input"
-              value={form.target}
-              onChange={(e) => setForm((p) => ({ ...p, target: e.target.value }))}
-            >
-              {TARGET_OPTIONS.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="input-label">Payload</label>
-            <input
-              className="input"
-              value={form.payload}
-              onChange={(e) => setForm((p) => ({ ...p, payload: e.target.value }))}
-              placeholder="např. %' OR IF(1=1,SLEEP(2),0) -- "
-            />
-          </div>
-
-          <button
-            className="button"
-            type="button"
-            onClick={onRun}
-            disabled={!canRun || isRunning}
+        {inlineError ? (
+          <div
             style={{
-              opacity: !canRun || isRunning ? 0.6 : 1,
-              pointerEvents: !canRun || isRunning ? "none" : "auto",
-              marginTop: 6,
+              border: "1px solid #ef4444",
+              background: "#fef2f2",
+              padding: 10,
+              borderRadius: 6,
+              marginBottom: 12,
+              fontSize: 14,
             }}
           >
-            {isRunning ? "Running..." : "Run"}
-          </button>
+            {inlineError}
+          </div>
+        ) : null}
+
+        <div className="form-group">
+          <label className="input-label">Mode</label>
+          <select
+            className="input"
+            value={form.mode}
+            onChange={(e) => setForm((p) => ({ ...p, mode: e.target.value }))}
+          >
+            {MODE_OPTIONS.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {/* RESULT */}
-        <div className="card" id="sqli-result">
-          <div style={{ fontWeight: 700, marginBottom: 10 }}>Result</div>
+        <div className="form-group">
+          <label className="input-label">Pattern</label>
+          <select
+            className="input"
+            value={form.pattern}
+            onChange={(e) => setForm((p) => ({ ...p, pattern: e.target.value }))}
+          >
+            {PATTERN_OPTIONS.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          {!lastRun ? (
-            <div style={{ fontSize: 14, opacity: 0.75 }}>
-              Zatím nic neběželo. Vyber preset a klikni Run.
-            </div>
-          ) : (
-            <>
-              <div className="dashboard-grid" style={{ marginBottom: 12 }}>
-                <div className="dashboard-card">
-                  <div className="dashboard-card-label">Server duration</div>
-                  <div className="dashboard-card-value">
-                    {msToHuman(lastRun.response?.durationMs)}
-                  </div>
-                </div>
-                <div className="dashboard-card">
-                  <div className="dashboard-card-label">Client duration</div>
-                  <div className="dashboard-card-value">
-                    {msToHuman(lastRun.clientDurationMs)}
-                  </div>
-                </div>
-                <div className="dashboard-card">
-                  <div className="dashboard-card-label">Row count</div>
-                  <div className="dashboard-card-value">
-                    {lastRun.response?.rowCount ?? "—"}
-                  </div>
+        <div className="form-group">
+          <label className="input-label">Target</label>
+          <select
+            className="input"
+            value={form.target}
+            onChange={(e) => setForm((p) => ({ ...p, target: e.target.value }))}
+          >
+            {TARGET_OPTIONS.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label className="input-label">Payload</label>
+          <input
+            className="input"
+            value={form.payload}
+            onChange={(e) => setForm((p) => ({ ...p, payload: e.target.value }))}
+            placeholder="např. %' OR IF(1=1,SLEEP(2),0) -- "
+          />
+        </div>
+
+        <button
+          className="button"
+          type="button"
+          onClick={onRun}
+          disabled={!canRun || isRunning}
+          style={{
+            opacity: !canRun || isRunning ? 0.6 : 1,
+            pointerEvents: !canRun || isRunning ? "none" : "auto",
+            marginTop: 6,
+          }}
+        >
+          {isRunning ? "Running..." : "Run"}
+        </button>
+      </div>
+
+      {/* RESULT */}
+      <div className="card" id="sqli-result">
+        <div style={{ fontWeight: 700, marginBottom: 10 }}>Result</div>
+
+        {!lastRun ? (
+          <div style={{ fontSize: 14, opacity: 0.75 }}>
+            Zatím nic neběželo. Vyber preset a klikni Run.
+          </div>
+        ) : (
+          <>
+            <div className="dashboard-grid" style={{ marginBottom: 12 }}>
+              <div className="dashboard-card">
+                <div className="dashboard-card-label">Server duration</div>
+                <div className="dashboard-card-value">
+                  {msToHuman(lastRun.response?.durationMs)}
                 </div>
               </div>
-
-              {lastRun.response?.error ? (
-                <div
-                  style={{
-                    border: "1px solid #ef4444",
-                    background: "#fef2f2",
-                    padding: 10,
-                    borderRadius: 6,
-                    marginBottom: 12,
-                    fontSize: 14,
-                    whiteSpace: "pre-wrap",
-                  }}
-                >
-                  <strong>Error:</strong> {String(lastRun.response.error)}
+              <div className="dashboard-card">
+                <div className="dashboard-card-label">Client duration</div>
+                <div className="dashboard-card-value">
+                  {msToHuman(lastRun.clientDurationMs)}
                 </div>
-              ) : null}
-
-              {Array.isArray(lastRun.response?.dataPreview) &&
-              lastRun.response.dataPreview.length > 0 ? (
-                <div style={{ marginBottom: 12 }}>
-                  <div style={{ fontWeight: 700, marginBottom: 8 }}>dataPreview</div>
-                  <div className="dashboard-list">
-                    {lastRun.response.dataPreview.slice(0, 5).map((row, idx) => (
-                      <div key={idx} className="dashboard-list-item">
-                        <div className="dashboard-list-main">
-                          <div style={{ fontWeight: 700 }}>Row #{idx + 1}</div>
-                          <div style={{ fontSize: 12, opacity: 0.7 }}>
-                            {Object.keys(row || {}).join(", ")}
-                          </div>
-                        </div>
-                        <div className="dashboard-list-meta" style={{ fontSize: 12 }}>
-                          <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>
-                            {prettyJson(row)}
-                          </pre>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+              </div>
+              <div className="dashboard-card">
+                <div className="dashboard-card-label">Row count</div>
+                <div className="dashboard-card-value">
+                  {lastRun.response?.rowCount ?? "—"}
                 </div>
-              ) : null}
+              </div>
+            </div>
 
-              <div style={{ fontWeight: 700, marginBottom: 8 }}>Raw response</div>
-              <pre
+            {lastRun.response?.error ? (
+              <div
                 style={{
-                  margin: 0,
-                  padding: 12,
+                  border: "1px solid #ef4444",
+                  background: "#fef2f2",
+                  padding: 10,
                   borderRadius: 6,
-                  border: "1px solid #e5e7eb",
-                  background: "#f9fafb",
-                  overflowX: "auto",
-                  fontSize: 12,
+                  marginBottom: 12,
+                  fontSize: 14,
+                  whiteSpace: "pre-wrap",
                 }}
               >
-                {prettyJson(lastRun.response)}
-              </pre>
-            </>
-          )}
-        </div>
+                <strong>Error:</strong> {String(lastRun.response.error)}
+              </div>
+            ) : null}
+
+            {Array.isArray(lastRun.response?.dataPreview) &&
+            lastRun.response.dataPreview.length > 0 ? (
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ fontWeight: 700, marginBottom: 8 }}>dataPreview</div>
+                <div className="dashboard-list">
+                  {lastRun.response.dataPreview.slice(0, 5).map((row, idx) => (
+                    <div key={idx} className="dashboard-list-item sqli-result-row">
+                      <div className="dashboard-list-main">
+                        <div style={{ fontWeight: 700 }}>Row #{idx + 1}</div>
+                        <div style={{ fontSize: 12, opacity: 0.7 }}>
+                          {Object.keys(row || {}).join(", ")}
+                        </div>
+                      </div>
+                      <div className="dashboard-list-meta sqli-row-json">
+                        <pre className="sqli-json-preview">
+                          {prettyJson(row)}
+                        </pre>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            <div style={{ fontWeight: 700, marginBottom: 8 }}>Raw response</div>
+            <pre className="sqli-raw-response">
+              {prettyJson(lastRun.response)}
+            </pre>
+          </>
+        )}
       </div>
 
       {/* HISTORY */}
@@ -349,7 +336,7 @@ export default function SqliDemoPage() {
             {history.map((h) => (
               <div
                 key={h.id}
-                className="dashboard-list-item"
+                className="dashboard-list-item sqli-history-row"
                 style={{ cursor: "pointer" }}
                 onClick={() => setLastRun(h)}
                 title="Klikni pro otevření jako poslední výsledek"
