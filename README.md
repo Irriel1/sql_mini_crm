@@ -11,7 +11,7 @@ Aplikace je rozdělena na:
 - zamerne zranitelne demo endpointy,
 - SQL Injection Lab pro rizene testovani payloadu v lokalnim prostredi.
 
-> Demo zranitelne rezimy (`DEMO_VULN`, `DEMO_SQLI_LAB`) jsou urcene pouze pro lokalni akademicke testovani. Nepouzivejte je v produkcnim prostredi.
+> Demo zranitelne rezimy (`DEMO_VULN`, `DEMO_SQLI_LAB`) jsou urcene pouze pro lokalni akademicke testovani.
 
 ## Pozadavky
 
