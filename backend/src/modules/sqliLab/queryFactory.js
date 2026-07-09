@@ -67,7 +67,6 @@ const TARGET_SPECS = {
     name: "users",
     // Users target ma akademickou hodnotu pro ukazku dopadu SQLi na ucty.
     // Bezny SELECT zamerne nevraci password_hash; lab je admin-only, ale vystup
-    // ma byt citelny pro demonstraci, ne primarne pro exfiltraci citlivych hashu.
     selectColumns: ["id", "email", "name", "role", "created_at"],
     fromClause: "FROM users",
     baseWhere: [],

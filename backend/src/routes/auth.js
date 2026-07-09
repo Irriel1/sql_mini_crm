@@ -3,7 +3,7 @@ const { login, register, demoRawLogin } = require('../controllers/authController
 const { DEMO_VULN } = require('../config');
 const router = express.Router();
 
-// 🛠 správný import middleware:
+// import middleware:
 const { authMiddleware } = require('../middleware/auth');
 
 // DB instance

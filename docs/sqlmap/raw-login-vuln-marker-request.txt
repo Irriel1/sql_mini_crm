@@ -1,0 +1,9 @@
+POST /api/auth/demo/raw-login HTTP/1.1
+Host: 127.0.0.1:4000
+Content-Type: application/json
+Connection: close
+
+{
+  "email": "admin@example.com*",
+  "password": "wrong-password"
+}
